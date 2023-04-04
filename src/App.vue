@@ -5,7 +5,7 @@ import { useStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 
 const defaults = {
-  bottleSize: 0,
+  bottleSize: 8,
   otherValue: 0,
   goal: 0,
   setup: true,
