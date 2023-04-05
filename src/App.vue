@@ -56,7 +56,7 @@ watch(progress, () => {
 	}
 });
 
-const addToTotal = (e: PointerEvent) => {
+const addToTotal = (e: MouseEvent) => {
 	emojisplosion({
 		emojis,
 		position: () => ({
