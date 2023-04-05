@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import SelectButton from "primevue/selectbutton";
 import { useStorage } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
+import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 
 const defaults = {
@@ -12,7 +13,12 @@ const defaults = {
 	total: 0,
 };
 
+const emojis = ["💦", "💧", "🌊", "🐬"];
+
 const state = useStorage("state", defaults);
+
+const knob = ref();
+const logButton = ref();
 
 const options = [
 	{ label: "8oz", value: 8 },
@@ -39,9 +45,28 @@ const progress = computed(() => {
 	}
 });
 
-const addToTotal = () => {
+watch(progress, () => {
+	if (progress.value === 100) {
+		const { cancel } = emojisplosions({
+			emojis,
+			emojiCount: 100
+		});
+		// history.value.set(new Date().toISOString().split('T')[0], { total: state.value.total, goal: state.value.goal });
+		setTimeout(cancel, 6000);
+	}
+});
+
+const addToTotal = (e: PointerEvent) => {
+	emojisplosion({
+		emojis,
+		position: () => ({
+			x: e.clientX,
+			y: e.clientY
+		}),
+	})
 	state.value.total += bottleSize.value;
 };
+
 </script>
 
 <template>
@@ -62,7 +87,8 @@ const addToTotal = () => {
 					v-model.number="state.otherValue" />
 
 			</div>
-			<Button @click="addToTotal" :label="`Log ${bottleSize}oz`" />
+
+			<Button ref="logButton" @click="addToTotal" :label="`Log ${bottleSize}oz`" />
 
 		</div>
 
@@ -71,9 +97,7 @@ const addToTotal = () => {
 			<div class="flex align-items-center justify-content-center gap-2">
 				<div class="font-bold inline-block text-5xl">{{ state.total }} / {{ state.goal }}oz</div>
 			</div>
-			<Knob :animation="{
-				animated: true
-			}" valueTemplate="{value}%" :size="200" :readonly="true" v-model="progress"></Knob>
+			<Knob ref="knob" valueTemplate="{value}%" :size="200" :readonly="true" v-model="progress"></Knob>
 			<Button class="p-button-link" label="Reset" @click="state.total = 0" />
 		</div>
 	</div>
