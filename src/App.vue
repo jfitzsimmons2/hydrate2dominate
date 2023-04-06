@@ -95,7 +95,7 @@ const addToTotal = (e: MouseEvent) => {
 
 		<div class="flex flex-column gap-2">
 			<div class="flex align-items-center justify-content-center gap-2">
-				<div class="font-bold inline-block text-5xl">{{ state.total }} / {{ state.goal }}oz</div>
+				<div class="font-bold inline-block text-4xl">{{ state.total }} / {{ state.goal }}oz</div>
 			</div>
 			<Knob ref="knob" valueTemplate="{value}%" :size="200" :readonly="true" v-model="progress"></Knob>
 			<Button class="p-button-link" label="Reset" @click="state.total = 0" />
