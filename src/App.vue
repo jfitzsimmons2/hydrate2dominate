@@ -5,15 +5,14 @@ import { computed, ref, watch } from "vue";
 import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 
-const defaults = {
-  bottleSize: 8,
-  otherValue: 0,
-  goal: 0,
-  setup: true,
-  total: 0,
-};
+const emojis = ["💦", "💧", "🌊", "💦", "💧", "🌊", "🐬"];
 
-const emojis = ["💦", "💧", "🌊", "🐬"];
+const defaults = {
+	bottleSize: 8,
+	otherValue: 0,
+	goal: 0,
+	total: 64,
+};
 
 const state = useStorage("state", defaults);
 
