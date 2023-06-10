@@ -17,7 +17,7 @@ const confirm = useConfirm();
 const toast = useToast();
 const email = ref('');
 const user = ref();
-const activity = ref([]);
+const activity = ref([] as any[]);
 
 const login = async () => {
 	loginButtonLoading.value = true;
@@ -92,7 +92,7 @@ const bottleSize = computed(() => {
 });
 
 const total = computed(() => {
-	return activity.value?.reduce((acc, cur) => acc + cur.amount_logged, 0) ?? 0;
+	return activity.value?.reduce((acc: number, cur: any) => acc + cur?.amount_logged, 0) ?? 0;
 });
 
 const progress = computed(() => {
@@ -239,7 +239,7 @@ const getUserActivityDay = async () => {
 }
 
 const dataTableData = computed(() => {
-	return activity.value?.toReversed();
+	return activity.value?.slice().reverse();
 })
 
 
