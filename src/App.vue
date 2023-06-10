@@ -2,7 +2,7 @@
 import SelectButton from "primevue/selectbutton";
 import Dialog from "primevue/dialog";
 import { useStorage } from "@vueuse/core";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 import { supabase } from './supabase';
@@ -44,20 +44,15 @@ const login = async () => {
 		});
 	}
 	loginButtonLoading.value = false;
-	console.log(data, error);
+
 };
 
 supabase.auth.onAuthStateChange((event, session) => {
 	if (event === 'SIGNED_IN') {
-
-		console.log('signed in');
-		console.log({ event, session })
 		user.value = session?.user;
-		console.log({ user: user.value })
 		getUserActivityDay();
 	} else if (event === 'SIGNED_OUT') {
 		user.value = undefined;
-		console.log('signed out');
 	}
 });
 
@@ -180,7 +175,7 @@ const addToTotal = async (e: MouseEvent) => {
 			p_user_id: user.value.id,
 			p_amount_logged: bottleSize.value
 		});
-		console.log({ data, error });
+
 		if (error) {
 			toast.add({
 				severity: "error",
@@ -219,8 +214,6 @@ const getUserActivityDay = async () => {
 		date_requested: '2023-06-10',
 		p_user_id: user.value.id
 	});
-
-	console.log({ data, error });
 
 	if (!error) {
 		activity.value = data;
@@ -294,7 +287,7 @@ const dataTableData = computed(() => {
 	</div>
 
 	<div class="container my-4">
-		<DataTable v-if="user" :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
+		<DataTable v-if="activity" :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
 			:rowsPerPageOptions="[10, 25, 50, 100]">
 			<Column field="log_date" header="Date"></Column>
 			<Column field="amount_logged" header="Amount Logged"></Column>
@@ -304,6 +297,7 @@ const dataTableData = computed(() => {
 	<Dialog :modal="true" v-model:visible="loginDialogVisible" header="Login">
 		<div class="flex flex-column gap-2">
 			<p>Enter your email address to login or signup, you will be sent a magic link to login.</p>
+			<p>After you have an account, you can keep track of how much water you've consumed over time.</p>
 
 			<div class="flex gap-1">
 				<InputText class="w-full" v-model="email" placeholder="Email address" />
