@@ -17,7 +17,7 @@ const confirm = useConfirm();
 const toast = useToast();
 const email = ref('');
 const user = ref();
-const activity = ref();
+const activity = ref([]);
 
 const login = async () => {
 	loginButtonLoading.value = true;
@@ -49,6 +49,7 @@ const login = async () => {
 
 supabase.auth.onAuthStateChange((event, session) => {
 	if (event === 'SIGNED_IN') {
+
 		console.log('signed in');
 		console.log({ event, session })
 		user.value = session?.user;
@@ -66,7 +67,7 @@ const defaults = {
 	bottleSize: 8,
 	otherValue: 0,
 	goal: 128,
-	total: 64,
+	total: 0,
 };
 
 const state = useStorage("state", defaults);
@@ -90,8 +91,12 @@ const bottleSize = computed(() => {
 	}
 });
 
+const total = computed(() => {
+	return activity.value?.reduce((acc, cur) => acc + cur.amount_logged, 0) ?? 0;
+});
+
 const progress = computed(() => {
-	const p = (state.value.total / state.value.goal) * 100;
+	const p = (total.value / state.value.goal) * 100;
 	if (p < 100) {
 		return parseInt(p.toFixed(2));
 	} else {
@@ -170,32 +175,38 @@ watch(progress, () => {
 });
 
 const addToTotal = async (e: MouseEvent) => {
-	const { data, error } = await supabase.rpc('insert_daily_activity', {
-		p_user_id: user.value.id,
-		p_amount_logged: bottleSize.value
+	if (user.value) {
+		const { data, error } = await supabase.rpc('insert_daily_activity', {
+			p_user_id: user.value.id,
+			p_amount_logged: bottleSize.value
+		});
+		console.log({ data, error });
+		if (error) {
+			toast.add({
+				severity: "error",
+				summary: "Error code: " + error.code,
+				detail: error.message + ((error.hint) ? '<br>' + error.hint : ''),
+				life: 0,
+				group: 'tr'
+			});
+		} else {
+			activity.value.push(data);
+		}
+	}
+
+	activity.value.push({ log_date: new Date().toISOString().split('T')[0], amount_logged: bottleSize.value });
+
+	emojisplosion({
+		emojis,
+		position: () => ({
+			x: e.clientX,
+			y: e.clientY,
+		}),
 	});
-	console.log({ data, error });
-	if (error) {
-		toast.add({
-			severity: "error",
-			summary: "Error code: " + error.code,
-			detail: error.message + ((error.hint) ? '<br>' + error.hint : ''),
-			life: 0,
-			group: 'tr'
-		});
-	}
-	if (!error && data) {
-		activity.value.push(data);
-		emojisplosion({
-			emojis,
-			position: () => ({
-				x: e.clientX,
-				y: e.clientY,
-			}),
-		});
-		state.value.total += bottleSize.value;
-	}
-};
+	state.value.total += bottleSize.value;
+
+
+}
 
 if (!user) {
 	console.log("no user")
