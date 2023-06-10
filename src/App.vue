@@ -127,7 +127,7 @@ const handleResetClick = async () => {
 					});
 				}
 				activity.value = [];
-				state.value.total = 0
+
 			},
 			reject: () => {
 				toast.add({ severity: 'info', summary: 'Operation canceled', detail: 'Nothing has been reset', life: 3000, group: 'tr' });
@@ -135,7 +135,7 @@ const handleResetClick = async () => {
 		});
 	} else {
 		activity.value = [];
-		state.value.total = 0
+
 	};
 };
 
@@ -192,9 +192,9 @@ const addToTotal = async (e: MouseEvent) => {
 		} else {
 			activity.value.push(data);
 		}
+	} else {
+		activity.value.push({ log_date: new Date().toISOString().split('T')[0], amount_logged: bottleSize.value });
 	}
-
-	activity.value.push({ log_date: new Date().toISOString().split('T')[0], amount_logged: bottleSize.value });
 
 	emojisplosion({
 		emojis,
@@ -203,7 +203,7 @@ const addToTotal = async (e: MouseEvent) => {
 			y: e.clientY,
 		}),
 	});
-	state.value.total += bottleSize.value;
+
 
 
 }
@@ -282,7 +282,7 @@ const dataTableData = computed(() => {
 		<div class="flex flex-column gap-2">
 			<div class="flex align-items-center justify-content-center gap-2">
 				<div class="font-bold inline-block text-4xl">
-					{{ state.total }} / {{ state.goal }}oz
+					{{ total }} / {{ state.goal }}oz
 				</div>
 			</div>
 			<div class="flex justify-content-center">
