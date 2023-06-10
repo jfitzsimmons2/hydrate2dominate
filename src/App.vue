@@ -102,31 +102,36 @@ const progress = computed(() => {
 const loginDialogVisible = ref(false);
 
 const handleResetClick = async () => {
-	confirm.require({
-		message: 'Resetting will delete all your activity for today. Are you sure you want to continue?',
-		header: 'Confirm reset',
-		accept: async () => {
+	if (user.value) {
+		confirm.require({
+			message: 'Resetting will delete all your activity for today. Are you sure you want to continue?',
+			header: 'Confirm reset',
+			accept: async () => {
 
-			const { error } = await supabase.rpc('delete_daily_activity_by_date', {
-				"p_delete_date": new Date().toISOString().split('T')[0],
-			})
-			if (!error) {
+				const { error } = await supabase.rpc('delete_daily_activity_by_date', {
+					"p_delete_date": new Date().toISOString().split('T')[0],
+				})
+				if (!error) {
 
-				toast.add({
-					severity: "info",
-					summary: "Reset successful",
-					detail: "All your activity for today has been deleted.",
-					life: 5000,
-					group: 'tr'
-				});
+					toast.add({
+						severity: "info",
+						summary: "Reset successful",
+						detail: "All your activity for today has been deleted.",
+						life: 5000,
+						group: 'tr'
+					});
+				}
+				activity.value = [];
+				state.value.total = 0
+			},
+			reject: () => {
+				toast.add({ severity: 'info', summary: 'Operation canceled', detail: 'Nothing has been reset', life: 3000, group: 'tr' });
 			}
-			activity.value = [];
-			state.value.total = 0
-		},
-		reject: () => {
-			toast.add({ severity: 'info', summary: 'Operation canceled', detail: 'Nothing has been reset', life: 3000, group: 'tr' });
-		}
-	});
+		});
+	} else {
+		activity.value = [];
+		state.value.total = 0
+	};
 };
 
 const handleLoginClick = () => {
