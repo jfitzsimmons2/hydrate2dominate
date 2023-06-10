@@ -241,8 +241,8 @@ const dataTableData = computed(() => {
 <template>
 	<ConfirmDialog />
 	<Toast position="top-right" group="tr" />
-	<header class="container flex align-items-center gap-2 justify-content-between mb-4">
-		<h1 class="text-center text-2xl m-0">Hydrate2Dominate</h1>
+	<header class="container sm:flex align-items-center gap-2 justify-content-between mb-4">
+		<h1 class="text-2xl m-0">Hydrate2Dominate</h1>
 		<div v-if="!user">
 			<Button @click="handleLoginClick" :loading="loginButtonLoading">login</Button>
 		</div>
