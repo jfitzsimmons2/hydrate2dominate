@@ -211,7 +211,7 @@ const loginButtonLoading = ref(false);
 
 const getUserActivityDay = async () => {
 	const { data, error } = await supabase.rpc('get_user_activity_single_day', {
-		date_requested: '2023-06-10',
+		date_requested: new Date().toISOString().split('T')[0],
 		p_user_id: user.value.id
 	});
 
