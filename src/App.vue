@@ -10,6 +10,7 @@ import Toast from "primevue/toast";
 import { useToast } from 'primevue/usetoast';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import Panel from "primevue/panel";
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
 
@@ -18,6 +19,10 @@ const toast = useToast();
 const email = ref('');
 const user = ref();
 const activity = ref([] as any[]);
+const todayActivity = computed(() => {
+	if (activity.value.length === 0) return [];
+	return activity.value?.filter((a: any) => a.log_time.split('T')[0] === new Date().toISOString().split('T')[0]);
+});
 
 const login = async () => {
 	loginButtonLoading.value = true;
@@ -50,7 +55,7 @@ const login = async () => {
 supabase.auth.onAuthStateChange((event, session) => {
 	if (event === 'SIGNED_IN') {
 		user.value = session?.user;
-		getUserActivityDay();
+		getUserActivity();
 	} else if (event === 'SIGNED_OUT') {
 		user.value = undefined;
 	}
@@ -87,7 +92,7 @@ const bottleSize = computed(() => {
 });
 
 const total = computed(() => {
-	return activity.value?.reduce((acc: number, cur: any) => acc + cur?.amount_logged, 0) ?? 0;
+	return todayActivity.value?.reduce((acc: number, cur: any) => acc + cur?.amount_logged, 0) ?? 0;
 });
 
 const progress = computed(() => {
@@ -122,6 +127,7 @@ const handleResetClick = async () => {
 					});
 				}
 				activity.value = [];
+				getUserActivity();
 
 			},
 			reject: () => {
@@ -130,7 +136,6 @@ const handleResetClick = async () => {
 		});
 	} else {
 		activity.value = [];
-
 	};
 };
 
@@ -164,7 +169,6 @@ watch(progress, () => {
 			emojis,
 			emojiCount: 100,
 		});
-		// history.value.set(new Date().toISOString().split('T')[0], { total: state.value.total, goal: state.value.goal });
 		setTimeout(cancel, 6000);
 	}
 });
@@ -172,7 +176,6 @@ watch(progress, () => {
 const addToTotal = async (e: MouseEvent) => {
 	if (user.value) {
 		const { data, error } = await supabase.rpc('insert_daily_activity', {
-			p_user_id: user.value.id,
 			p_amount_logged: bottleSize.value
 		});
 
@@ -188,7 +191,7 @@ const addToTotal = async (e: MouseEvent) => {
 			activity.value.push(data);
 		}
 	} else {
-		activity.value.push({ log_date: new Date().toISOString().split('T')[0], amount_logged: bottleSize.value });
+		activity.value.push({ log_time: new Date().toISOString(), amount_logged: bottleSize.value });
 	}
 
 	emojisplosion({
@@ -209,11 +212,8 @@ if (!user) {
 
 const loginButtonLoading = ref(false);
 
-const getUserActivityDay = async () => {
-	const { data, error } = await supabase.rpc('get_user_activity_single_day', {
-		date_requested: new Date().toISOString().split('T')[0],
-		p_user_id: user.value.id
-	});
+const getUserActivity = async () => {
+	const { data, error } = await supabase.rpc('get_user_activity');
 
 	if (!error) {
 		activity.value = data;
@@ -252,7 +252,6 @@ const dataTableData = computed(() => {
 		</div>
 	</header>
 
-
 	<div class="container flex flex-column sm:flex-row justify-content-center gap-6">
 		<div class="flex flex-column gap-4">
 			<div class="flex align-items-center gap-2">
@@ -287,23 +286,32 @@ const dataTableData = computed(() => {
 	</div>
 
 	<div class="container my-4">
-		<DataTable v-if="activity" :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
-			:rowsPerPageOptions="[10, 25, 50, 100]">
-			<Column field="log_date" header="Date"></Column>
-			<Column field="amount_logged" header="Amount Logged"></Column>
-		</DataTable>
+		<Panel v-if="user" header="List of all times you've logged water" :collapsed="true" :toggleable="true">
+
+			<DataTable :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
+				:rowsPerPageOptions="[10, 25, 50, 100]">
+				<Column field="log_time" header="Time">
+					<template #body="slotProps">
+						{{ new Date(slotProps.data.log_time).toLocaleString() }}
+					</template>
+				</Column>
+				<Column field="amount_logged" header="Amount Logged"></Column>
+			</DataTable>
+		</Panel>
 	</div>
 
 	<Dialog :modal="true" v-model:visible="loginDialogVisible" header="Login">
-		<div class="flex flex-column gap-2">
-			<p>Enter your email address to login or signup, you will be sent a magic link to login.</p>
-			<p>After you have an account, you can keep track of how much water you've consumed over time.</p>
 
+		<p>Enter your email address to login or signup, you will be sent a magic link to login.</p>
+		<p>After you have an account, you can keep track of how much water you've consumed over time.</p>
+
+		<form @submit.prevent="login">
 			<div class="flex gap-1">
 				<InputText class="w-full" v-model="email" placeholder="Email address" />
-				<Button @click="login">Login</Button>
+				<Button type="submit">Login</Button>
 			</div>
-		</div>
+		</form>
+
 	</Dialog>
 </template>
 
