@@ -242,7 +242,8 @@ const dataTableData = computed(() => {
 	<ConfirmDialog />
 	<Toast position="top-right" group="tr" />
 	<header class="container sm:flex align-items-center gap-2 justify-content-between mb-4">
-		<h1 class="text-2xl m-0">Hydrate2Dominate</h1>
+		<h1 class="text-2xl flex align-items-center gap-2 m-0"><img src="favicon.ico" style="width: 2rem; height: 2rem;" />
+			Hydrate2Dominate</h1>
 		<div v-if="!user">
 			<Button @click="handleLoginClick" :loading="loginButtonLoading">login</Button>
 		</div>
@@ -319,5 +320,9 @@ const dataTableData = computed(() => {
 .container {
 	max-width: 800px;
 	margin: 0 auto;
+}
+
+span:empty {
+	display: none;
 }
 </style>
