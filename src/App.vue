@@ -249,7 +249,9 @@ const dataTableData = computed(() => {
 	<Toast position="top-right" group="tr" />
 	<header class="container sm:flex align-items-center gap-2 justify-content-between mb-4">
 		<h1 class="text-2xl flex align-items-center gap-2 m-0"><img src="/favicon.ico" style="width: 2rem; height: 2rem;" />
-			Hydrate2Dominate</h1>
+			<span><span class="text-blue-600">Hydrate</span><span class="text-blue-700">2</span><span
+					class="text-blue-600">Dominate</span></span>
+		</h1>
 		<div v-if="!user">
 			<Button @click="handleLoginClick" text :loading="loginButtonLoading"><i class="pi pi-user mr-2"></i>
 				Login</Button>
@@ -290,7 +292,7 @@ const dataTableData = computed(() => {
 			<Button ref="logButton" @click="addToTotal" :label="`Log ${bottleSize}oz`" />
 		</div>
 
-		<div class="flex flex-column gap-2">
+		<div class="flex flex-grow-1 flex-column gap-2">
 			<div class="flex align-items-center justify-content-center gap-2">
 				<div class="font-bold inline-block text-4xl">
 					{{ total }} / {{ state.goal }}oz
