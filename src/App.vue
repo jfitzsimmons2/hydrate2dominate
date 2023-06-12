@@ -11,9 +11,14 @@ import { useToast } from 'primevue/usetoast';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Panel from "primevue/panel";
+import Menu from "primevue/menu";
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
 
+const menu = ref();
+const toggleMenu = (event: Event) => {
+	menu.value.toggle(event);
+};
 const confirm = useConfirm();
 const toast = useToast();
 const email = ref('');
@@ -111,6 +116,7 @@ const handleResetClick = async () => {
 		confirm.require({
 			message: 'Resetting will delete all your activity for today. Are you sure you want to continue?',
 			header: 'Confirm reset',
+			acceptIcon: 'pi pi-check',
 			accept: async () => {
 
 				const { error } = await supabase.rpc('delete_daily_activity_by_date', {
@@ -245,11 +251,23 @@ const dataTableData = computed(() => {
 		<h1 class="text-2xl flex align-items-center gap-2 m-0"><img src="favicon.ico" style="width: 2rem; height: 2rem;" />
 			Hydrate2Dominate</h1>
 		<div v-if="!user">
-			<Button @click="handleLoginClick" :loading="loginButtonLoading">login</Button>
+			<Button @click="handleLoginClick" text :loading="loginButtonLoading"><i class="pi pi-user mr-2"></i>
+				Login</Button>
 		</div>
 		<div v-else class="flex align-items-center gap-1">
-			<p class="m-0"><strong>logged in as</strong><br /> {{ user.email }}</p>
-			<Button @click="handleLogoutClick">logout</Button>
+			<Button @click="toggleMenu" icon="pi pi-bars" class="p-button-rounded p-button-text" />
+			<Menu ref="menu" id="overlay_menu" style="width: auto;" :popup="true">
+				<template #start>
+					<p class="m-0 py-2 px-3"><strong>Logged in as</strong><br /> {{ user.email }}</p>
+				</template>
+				<template #end>
+					<button @click="handleLogoutClick"
+						class="w-full p-link flex align-items-center py-2 px-3 text-color hover:surface-200 border-noround">
+						<i class="pi pi-sign-out" />
+						<span class="ml-2">Log Out</span>
+					</button>
+				</template>
+			</Menu>
 		</div>
 	</header>
 
@@ -287,7 +305,11 @@ const dataTableData = computed(() => {
 	</div>
 
 	<div class="container my-4">
-		<Panel v-if="user" header="List of all times you've logged water" :collapsed="true" :toggleable="true">
+		<Panel v-if="user" :pt="{
+			header: ({ state }) => ({
+				class: state.d_collapsed ? 'closed' : 'open'
+			})
+		}" header="List of all times you've logged water" :collapsed="true" :toggleable="true">
 
 			<DataTable :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
 				:rowsPerPageOptions="[10, 25, 50, 100]">
@@ -322,7 +344,7 @@ const dataTableData = computed(() => {
 	margin: 0 auto;
 }
 
-span:empty {
-	display: none;
+.p-panel-header.closed {
+	border-radius: 6px;
 }
 </style>
