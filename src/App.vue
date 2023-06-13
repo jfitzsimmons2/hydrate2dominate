@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SelectButton from "primevue/selectbutton";
 import Dialog from "primevue/dialog";
-import { useStorage } from "@vueuse/core";
+import { useNow, useStorage } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
@@ -14,6 +14,7 @@ import Panel from "primevue/panel";
 import Menu from "primevue/menu";
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
+import { useDateFormat } from "@vueuse/core";
 
 const menu = ref();
 const toggleMenu = (event: Event) => {
@@ -26,7 +27,7 @@ const user = ref();
 const activity = ref([] as any[]);
 const todayActivity = computed(() => {
 	if (activity.value.length === 0) return [];
-	return activity.value?.filter((a: any) => a.log_time.split('T')[0] === new Date().toISOString().split('T')[0]);
+	return activity.value?.filter((a: any) => useDateFormat(a.log_time, 'MMMM-DD-YYYY').value === useDateFormat(useNow(), 'MMMM-DD-YYYY').value);
 });
 
 const login = async () => {
