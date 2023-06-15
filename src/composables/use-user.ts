@@ -32,6 +32,10 @@ const useUser = () => {
   const getUserActivity = async () => {
     const { data, error } = await supabase.rpc("get_user_activity");
 
+    if (data) {
+      return data;
+    }
+
     if (error) {
       toast.add({
         severity: "error",

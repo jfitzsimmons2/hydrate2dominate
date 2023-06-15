@@ -17,14 +17,15 @@
 </template>
 
 <script setup lang="ts">
-import { inject, reactive, ref, watch } from 'vue';
+import { Ref, inject, reactive, ref, watch } from 'vue';
 import { supabase } from '../supabase';
 import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
+import { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
 
-const dialogRef = inject('dialogRef');
+const dialogRef = inject('dialogRef') as Ref<DynamicDialogInstance>;
 const passwordRef = ref();
 const showPassword = ref(false);
 const toast = useToast();
