@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import Header from "./components/Header.vue";
 import SelectButton from "primevue/selectbutton";
 import Dialog from "primevue/dialog";
 import { useNow, useStorage } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, defineAsyncComponent, reactive, ref, watch, watchEffect } from "vue";
 //import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 import { supabase } from './supabase';
@@ -11,61 +12,68 @@ import { useToast } from 'primevue/usetoast';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Panel from "primevue/panel";
-import Menu from "primevue/menu";
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
+import useUser from "./composables/use-user";
+import DynamicDialog from 'primevue/dynamicdialog';
 
-const menu = ref();
-const toggleMenu = (event: Event) => {
-	menu.value.toggle(event);
-};
 const confirm = useConfirm();
+
+
+const { user, getUserActivity } = useUser();
+
+const handleResetClick = async () => {
+	if (user.value) {
+		confirm.require({
+			message: 'Resetting will delete all your activity for today. Are you sure you want to continue?',
+			header: 'Confirm reset',
+			acceptIcon: 'pi pi-check',
+			accept: async () => {
+
+				const { error } = await supabase.rpc('delete_daily_activity_by_date', {
+					"p_delete_date": new Date().toISOString().split('T')[0],
+				})
+				if (!error) {
+
+					toast.add({
+						severity: "info",
+						summary: "Reset successful",
+						detail: "All your activity for today has been deleted.",
+						life: 5000,
+						group: 'tr'
+					});
+				}
+				activity.value = [];
+				activity.value = await getUserActivity();
+
+			},
+			reject: () => {
+				toast.add({ severity: 'info', summary: 'Operation canceled', detail: 'Nothing has been reset', life: 3000, group: 'tr' });
+			}
+		});
+	} else {
+		activity.value = [];
+	};
+};
+
 const toast = useToast();
-const email = ref('');
-const user = ref();
+
+
 const activity = ref([] as any[]);
 const todayActivity = computed(() => {
 	if (activity.value.length === 0) return [];
 	return activity.value?.filter((a: any) => useDateFormat(a.log_time, 'MMMM-DD-YYYY').value === useDateFormat(useNow(), 'MMMM-DD-YYYY').value);
 });
 
-const login = async () => {
-	loginButtonLoading.value = true;
-	const { data, error } = await supabase.auth.signInWithOtp({
-		email: email.value,
-	});
-	if (!error) {
-		loginDialogVisible.value = false;
-		toast.add({
-			severity: "success",
-			summary: "Login email sent",
-			detail: "Check your email for the login link",
-			life: 0,
-			group: 'tr'
-		});
-	}
-	if (error) {
-		toast.add({
-			severity: "error",
-			summary: "Error logging in",
-			detail: error.message,
-			life: 0,
-			group: 'tr'
-		});
-	}
-	loginButtonLoading.value = false;
+const items = ref([
+	{ separator: true },
+	{ label: 'New', icon: 'pi pi-fw pi-plus' },
+	{ label: 'Delete', icon: 'pi pi-fw pi-trash' },
+	{ separator: true }
+]);
 
-};
 
-supabase.auth.onAuthStateChange((event, session) => {
-	if (event === 'SIGNED_IN') {
-		user.value = session?.user;
-		getUserActivity();
-	} else if (event === 'SIGNED_OUT') {
-		user.value = undefined;
-	}
-});
 
 const emojis = ["💦", "💧", "🌊", "💦", "💧", "🌊", "🐬"];
 
@@ -110,58 +118,10 @@ const progress = computed(() => {
 	}
 });
 
-const loginDialogVisible = ref(false);
+watch(user, async () => {
 
-const handleResetClick = async () => {
-	if (user.value) {
-		confirm.require({
-			message: 'Resetting will delete all your activity for today. Are you sure you want to continue?',
-			header: 'Confirm reset',
-			acceptIcon: 'pi pi-check',
-			accept: async () => {
-
-				const { error } = await supabase.rpc('delete_daily_activity_by_date', {
-					"p_delete_date": new Date().toISOString().split('T')[0],
-				})
-				if (!error) {
-
-					toast.add({
-						severity: "info",
-						summary: "Reset successful",
-						detail: "All your activity for today has been deleted.",
-						life: 5000,
-						group: 'tr'
-					});
-				}
-				activity.value = [];
-				getUserActivity();
-
-			},
-			reject: () => {
-				toast.add({ severity: 'info', summary: 'Operation canceled', detail: 'Nothing has been reset', life: 3000, group: 'tr' });
-			}
-		});
-	} else {
-		activity.value = [];
-	};
-};
-
-const handleLoginClick = () => {
-	loginDialogVisible.value = true;
-};
-
-const handleLogoutClick = async () => {
-	const { error } = await supabase.auth.signOut();
-	if (!error) {
-		toast.add({
-			severity: "success",
-			summary: "Logged out",
-			detail: "You have been logged out. Your logging will not be saved to your account.",
-			life: 5000,
-			group: 'tr'
-		});
-	}
-};
+	activity.value = await getUserActivity();
+})
 
 watch(progress, () => {
 	if (progress.value === 100) {
@@ -213,67 +173,16 @@ const addToTotal = async (e: MouseEvent) => {
 
 }
 
-if (!user) {
-	console.log("no user")
-}
-
 const loginButtonLoading = ref(false);
-
-const getUserActivity = async () => {
-	const { data, error } = await supabase.rpc('get_user_activity');
-
-	if (!error) {
-		activity.value = data;
-	}
-
-	if (error) {
-		toast.add({
-			severity: "error",
-			summary: "Error getting activity",
-			detail: error.message,
-			life: 0,
-			group: 'tr'
-		});
-	}
-
-}
-
 const dataTableData = computed(() => {
 	return activity.value?.slice().reverse();
 })
-
-
 </script>
 
 <template>
-	<ConfirmDialog />
+	<ConfirmDialog style="max-width: 500px;" />
 	<Toast position="top-right" group="tr" />
-	<header class="container sm:flex align-items-center gap-2 justify-content-between mb-4">
-		<h1 class="text-2xl flex align-items-center gap-2 m-0"><img src="/favicon.ico" style="width: 2rem; height: 2rem;" />
-			<span><span class="text-blue-600">Hydrate</span><span class="text-blue-700">2</span><span
-					class="text-blue-600">Dominate</span></span>
-		</h1>
-		<div v-if="!user">
-			<Button @click="handleLoginClick" text :loading="loginButtonLoading"><i class="pi pi-user mr-2"></i>
-				Login</Button>
-		</div>
-		<div v-else class="flex align-items-center gap-1">
-			<Button @click="toggleMenu" icon="pi pi-bars" class="p-button-rounded p-button-text" />
-			<Menu ref="menu" id="overlay_menu" style="width: auto;" :popup="true">
-				<template #start>
-					<p class="m-0 py-2 px-3"><strong>Logged in as</strong><br /> {{ user.email }}</p>
-				</template>
-				<template #end>
-					<button @click="handleLogoutClick"
-						class="w-full p-link flex align-items-center py-2 px-3 text-color hover:surface-200 border-noround">
-						<i class="pi pi-sign-out" />
-						<span class="ml-2">Log Out</span>
-					</button>
-				</template>
-			</Menu>
-		</div>
-	</header>
-
+	<Header />
 	<div class="container flex flex-column sm:flex-row justify-content-center gap-6">
 		<div class="flex flex-column gap-4">
 			<div class="flex align-items-center gap-2">
@@ -326,20 +235,9 @@ const dataTableData = computed(() => {
 		</Panel>
 	</div>
 
-	<Dialog :modal="true" v-model:visible="loginDialogVisible" header="Login">
-
-		<p>Enter your email address to login or signup, you will be sent a magic link to login.</p>
-		<p>After you have an account, you can keep track of how much water you've consumed over time.</p>
-
-		<form @submit.prevent="login">
-			<div class="flex gap-1">
-				<InputText class="w-full" v-model="email" placeholder="Email address" />
-				<Button type="submit">Login</Button>
-			</div>
-		</form>
-
-	</Dialog>
+	<DynamicDialog />
 </template>
+
 
 <style>
 .container {
