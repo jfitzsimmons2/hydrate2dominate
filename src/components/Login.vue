@@ -41,7 +41,6 @@ const handleLogin = async () => {
 		toast.add({
 			severity: "success",
 			summary: "Login successful",
-
 			life: 5000,
 			group: 'tr'
 		});

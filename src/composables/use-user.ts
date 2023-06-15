@@ -17,6 +17,16 @@ const useUser = () => {
   const updateUserPassword = async (password: string) => {
     const { data, error } = await supabase.auth.updateUser({ password });
 
+    if (!error) {
+      toast.add({
+        severity: "success",
+        summary: "Password updated",
+        detail: "Your password has been updated",
+        life: 5000,
+        group: "tr",
+      });
+    }
+
     if (error) {
       toast.add({
         severity: "error",
@@ -25,6 +35,7 @@ const useUser = () => {
         life: 0,
         group: "tr",
       });
+      throw new Error(error.message);
     }
     return data;
   };

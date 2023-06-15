@@ -21,13 +21,18 @@
 </template>
 
 <script setup lang="ts">
-import { ComponentPublicInstance, reactive, ref, watchEffect } from "vue";
+import { ComponentPublicInstance, Ref, inject, reactive, ref, watchEffect } from "vue";
 import useUser, { user } from "../composables/use-user";
 import Badge from "primevue/badge";
 import Checkbox from "primevue/checkbox";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
+
+const dialogRef = inject("dialogRef") as Ref<DynamicDialogInstance>
 
 const { updateUserPassword } = useUser();
-const passwordRef = ref<ComponentPublicInstance>();
+const passwordRef = ref();
 const profile = reactive({
 	password: "",
 	showPassword: false,
@@ -35,19 +40,16 @@ const profile = reactive({
 
 const handlePasswordUpdate = async () => {
 	await updateUserPassword(profile.password);
+	dialogRef.value?.close();
 }
 
 watchEffect(() => {
-	console.log(profile.showPassword)
-	console.log(passwordRef.value)
 	if (profile.showPassword) {
 		passwordRef.value?.$el.setAttribute("type", "text");
 	} else {
 		passwordRef.value?.$el.setAttribute("type", "password");
 	}
-})
-
-console.log(user.value);
+});
 </script>
 
 <style scoped></style>
