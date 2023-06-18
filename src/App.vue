@@ -3,7 +3,7 @@ import Header from "./components/Header.vue";
 import SelectButton from "primevue/selectbutton";
 import Dialog from "primevue/dialog";
 import { useNow, useStorage } from "@vueuse/core";
-import { computed, defineAsyncComponent, reactive, ref, watch, watchEffect } from "vue";
+import { computed, defineAsyncComponent, onMounted, reactive, ref, watch, watchEffect } from "vue";
 //import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 import { supabase } from './supabase';
@@ -17,6 +17,9 @@ import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
 import useUser from "./composables/use-user";
 import DynamicDialog from 'primevue/dynamicdialog';
+import Accordion from "primevue/accordion";
+import AccordionTab from 'primevue/accordiontab';
+
 
 const confirm = useConfirm();
 
@@ -176,7 +179,13 @@ const addToTotal = async (e: MouseEvent) => {
 const loginButtonLoading = ref(false);
 const dataTableData = computed(() => {
 	return activity.value?.slice().reverse();
-})
+});
+
+onMounted(async () => {
+	if (!user.value) {
+		const { data, error } = await supabase.auth.getSession();
+	}
+});
 </script>
 
 <template>
@@ -217,22 +226,19 @@ const dataTableData = computed(() => {
 	</div>
 
 	<div class="container my-4">
-		<Panel v-if="user" :pt="{
-			header: ({ state }) => ({
-				class: state.d_collapsed ? 'closed' : 'open'
-			})
-		}" header="List of all times you've logged water" :collapsed="true" :toggleable="true">
-
-			<DataTable :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
-				:rowsPerPageOptions="[10, 25, 50, 100]">
-				<Column field="log_time" header="Time">
-					<template #body="slotProps">
-						{{ new Date(slotProps.data.log_time).toLocaleString() }}
-					</template>
-				</Column>
-				<Column field="amount_logged" header="Amount Logged"></Column>
-			</DataTable>
-		</Panel>
+		<Accordion v-if="user" :collapsed="true" :toggleable="true">
+			<AccordionTab header="List of all times you've logged water">
+				<DataTable :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
+					:rowsPerPageOptions="[10, 25, 50, 100]">
+					<Column field="log_time" header="Time">
+						<template #body="slotProps">
+							{{ new Date(slotProps.data.log_time).toLocaleString() }}
+						</template>
+					</Column>
+					<Column field="amount_logged" header="Amount Logged"></Column>
+				</DataTable>
+			</AccordionTab>
+		</Accordion>
 	</div>
 
 	<DynamicDialog />
