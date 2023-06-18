@@ -1,5 +1,5 @@
 <template>
-	<header class="container sm:flex align-items-center gap-2 justify-content-between mb-4">
+	<header class="container flex flex-wrap align-items-center gap-2 justify-content-between mb-4">
 		<div class="flex align-items-center gap-2">
 			<img src="/favicon.ico" style="width: 2.5rem; height: 2.5rem;" />
 			<div class="flex flex-column">

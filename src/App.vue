@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import Header from "./components/Header.vue";
 import SelectButton from "primevue/selectbutton";
-import Dialog from "primevue/dialog";
 import { useNow, useStorage } from "@vueuse/core";
 import { computed, defineAsyncComponent, onMounted, reactive, ref, watch, watchEffect } from "vue";
-//import { emojisplosion, emojisplosions } from "emojisplosion";
+import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 import { supabase } from './supabase';
 import Toast from "primevue/toast";
 import { useToast } from 'primevue/usetoast';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import Panel from "primevue/panel";
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
@@ -135,11 +133,11 @@ watch(progress, () => {
 			life: 10000,
 			group: 'tr'
 		});
-		// const { cancel } = emojisplosions({
-		// 	emojis,
-		// 	emojiCount: 100,
-		// });
-		// setTimeout(cancel, 6000);
+		const { cancel } = emojisplosions({
+			emojis,
+			emojiCount: 100,
+		});
+		setTimeout(cancel, 6000);
 	}
 });
 
@@ -164,13 +162,13 @@ const addToTotal = async (e: MouseEvent) => {
 		activity.value.push({ log_time: new Date().toISOString(), amount_logged: bottleSize.value });
 	}
 
-	// emojisplosion({
-	// 	emojis,
-	// 	position: () => ({
-	// 		x: e.clientX,
-	// 		y: e.clientY,
-	// 	}),
-	// });
+	emojisplosion({
+		emojis,
+		position: () => ({
+			x: e.clientX,
+			y: e.clientY,
+		}),
+	});
 
 
 
