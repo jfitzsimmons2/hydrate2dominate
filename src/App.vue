@@ -253,15 +253,15 @@ onMounted(async () => {
 }
 
 .p-toast-top-right {
-	top: 0;
-	right: 0;
+	top: 0 !important;
+	right: 0 !important;
 	max-width: 100%;
 }
 
 @media screen and (min-width: 640px) {
 	.p-toast-top-right {
-		top: 1rem;
-		right: 1rem;
+		top: 1rem !important;
+		right: 1rem !important;
 	}
 }
 </style>
