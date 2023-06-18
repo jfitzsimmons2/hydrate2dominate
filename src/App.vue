@@ -226,8 +226,7 @@ onMounted(async () => {
 	<div class="container my-4">
 		<Accordion v-if="user" :collapsed="true" :toggleable="true">
 			<AccordionTab header="List of all times you've logged water">
-				<DataTable :sort-order="1" :value="dataTableData" :paginator="true" :rows="10"
-					:rowsPerPageOptions="[10, 25, 50, 100]">
+				<DataTable :value="dataTableData" :paginator="true" :rows="25" :rowsPerPageOptions="[25, 50, 100]">
 					<Column field="log_time" header="Time">
 						<template #body="slotProps">
 							{{ new Date(slotProps.data.log_time).toLocaleString() }}
