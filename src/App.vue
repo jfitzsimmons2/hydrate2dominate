@@ -251,4 +251,17 @@ onMounted(async () => {
 .p-panel-header.closed {
 	border-radius: 6px;
 }
+
+.p-toast-top-right {
+	top: 0;
+	right: 0;
+	max-width: 100%;
+}
+
+@media screen and (min-width: 640px) {
+	.p-toast-top-right {
+		top: 1rem;
+		right: 1rem;
+	}
+}
 </style>
