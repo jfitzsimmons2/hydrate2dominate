@@ -7,6 +7,10 @@ export const user = ref();
 const useUser = () => {
   const toast = useToast();
   supabase.auth.onAuthStateChange((event, session) => {
+    if (import.meta.env.DEV) {
+      console.log("event", event, "session", session);
+    }
+
     if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
       user.value = session?.user;
     } else if (event === "SIGNED_OUT") {
