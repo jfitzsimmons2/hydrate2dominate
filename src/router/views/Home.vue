@@ -223,14 +223,17 @@ onMounted(async () => {
 	<div class="container my-4">
 		<Accordion v-if="user" :collapsed="true" :toggleable="true">
 			<AccordionTab header="List of all times you've logged water">
-				<DataTable :value="dataTableData" :paginator="true" :rows="25" :rowsPerPageOptions="[25, 50, 100]">
-					<Column field="log_time" header="Time">
-						<template #body="slotProps">
-							{{ new Date(slotProps.data.log_time).toLocaleString() }}
-						</template>
-					</Column>
-					<Column field="amount_logged" header="Amount Logged"></Column>
-				</DataTable>
+				<table class="p-datatable-table">
+					<tr>
+						<th>Time</th>
+						<th>Amount Logged</th>
+					</tr>
+					<tr v-for="a in dataTableData" :key="a.id">
+						<td>{{ new Date(a.log_time).toLocaleString() }}</td>
+						<td>{{ a.amount_logged }}oz</td>
+					</tr>
+				</table>
+
 			</AccordionTab>
 		</Accordion>
 	</div>
@@ -238,6 +241,10 @@ onMounted(async () => {
 
 
 <style>
+.p-datatable-table th {
+	text-align: left !important;
+}
+
 .container {
 	max-width: 800px;
 	margin: 0 auto;
