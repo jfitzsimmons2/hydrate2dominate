@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Header from "./components/Header.vue";
+import Header from "../../components/Header.vue";
 import SelectButton from "primevue/selectbutton";
 import { useNow, useStorage } from "@vueuse/core";
 import { computed, defineAsyncComponent, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
-import { supabase } from './supabase';
+import { supabase } from '../../supabase';
 import Toast from "primevue/toast";
 import { useToast } from 'primevue/usetoast';
 import DataTable from "primevue/datatable";
@@ -13,7 +13,7 @@ import Column from "primevue/column";
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
-import useUser from "./composables/use-user";
+import useUser from "../../composables/use-user";
 import DynamicDialog from 'primevue/dynamicdialog';
 import Accordion from "primevue/accordion";
 import AccordionTab from 'primevue/accordiontab';
@@ -187,20 +187,53 @@ onMounted(async () => {
 </script>
 
 <template>
-	<ConfirmDialog style="max-width: 500px;" />
-	<Toast position="top-right" group="tr" />
-	<Header />
-	<div class="container">
-		<RouterView />
-	</div>
-	<footer>
-		<div class="container flex justify-content-center gap-2">
-			<RouterLink to="/">Home</RouterLink>
-			<RouterLink to="/privacy-policy">Privacy Policy</RouterLink>
-		</div>
-	</footer>
+	<div class=" flex flex-column sm:flex-row justify-content-center gap-6">
+		<div class="flex flex-column gap-4">
+			<div class="flex align-items-center gap-2">
+				<div class="flex flex-column">
+					<label class="font-bold" for="goal">Goal (in oz)</label>
+					<InputNumber id="goal" v-model.number="state.goal" /><small>How much water are you trying to get in?</small>
+				</div>
+			</div>
+			<div class="flex flex-column justify-content-center gap-2">
+				<label class="font-bold" for="bottleSize">Bottle Size</label>
+				<SelectButton v-model="state.bottleSize" :options="options" optionLabel="label" optionValue="value"
+					aria-labelledby="basic" />
+				<InputNumber v-if="state.bottleSize === 0" id="bottleSize" aria-label="Custom bottle size"
+					v-model.number="state.otherValue" />
+			</div>
 
-	<DynamicDialog />
+			<Button ref="logButton" @click="addToTotal" :label="`Log ${bottleSize}oz`" />
+		</div>
+
+		<div class="flex flex-grow-1 flex-column gap-2">
+			<div class="flex align-items-center justify-content-center gap-2">
+				<div class="font-bold inline-block text-4xl">
+					{{ total }} / {{ state.goal }}oz
+				</div>
+			</div>
+			<div class="flex justify-content-center">
+				<Knob ref="knob" valueTemplate="{value}%" :size="200" :readonly="true" v-model="progress"></Knob>
+			</div>
+			<Button class="p-button-link" label="Reset" @click="handleResetClick" />
+		</div>
+
+	</div>
+
+	<div class="container my-4">
+		<Accordion v-if="user" :collapsed="true" :toggleable="true">
+			<AccordionTab header="List of all times you've logged water">
+				<DataTable :value="dataTableData" :paginator="true" :rows="25" :rowsPerPageOptions="[25, 50, 100]">
+					<Column field="log_time" header="Time">
+						<template #body="slotProps">
+							{{ new Date(slotProps.data.log_time).toLocaleString() }}
+						</template>
+					</Column>
+					<Column field="amount_logged" header="Amount Logged"></Column>
+				</DataTable>
+			</AccordionTab>
+		</Accordion>
+	</div>
 </template>
 
 

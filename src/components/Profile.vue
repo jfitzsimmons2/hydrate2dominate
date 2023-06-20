@@ -2,8 +2,8 @@
 	<div>
 		<div class="flex flex-column gap-2">
 			<p class="m-0">Logged in as {{ user?.email }}</p>
-			<div class="m-0">Signup type:
-				<Badge :value="user?.app_metadata.provider" />
+			<div class="m-0 flex gap-2">Signup type:
+				<Badge :value="provider" v-for="provider in user?.app_metadata.providers" :key="provider" />
 			</div>
 			<div class="flex flex-column gap-1">
 				<label class="font-bold" for="password">Change password</label>

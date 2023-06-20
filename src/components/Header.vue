@@ -1,15 +1,15 @@
 <template>
 	<header class="container flex flex-wrap align-items-center gap-2 justify-content-between mb-4">
-		<div class="flex align-items-center gap-2">
+		<a href="/" class="flex align-items-center gap-2 no-underline">
 			<img src="/favicon.ico" style="width: 2.5rem; height: 2.5rem;" />
 			<div class="flex flex-column">
 				<h1 class="text-lg flex align-items-center gap-2 m-0">
 					<span><span class="text-blue-600">Hydrate</span><span class="text-blue-700">2</span><span
 							class="text-blue-600">Dominate</span></span>
 				</h1>
-				<p class="m-0 text-sm">{{ hydrationQuote() }}</p>
+				<p class="m-0 text-gray-800 text-sm">{{ hydrationQuote() }}</p>
 			</div>
-		</div>
+		</a>
 		<div v-if="!user">
 			<Button @click="handleLoginClick" text><i class="pi pi-user mr-2"></i>
 				Login</Button>
