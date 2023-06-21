@@ -108,7 +108,9 @@ const progress = computed(() => {
 
 watch(user, async () => {
 
+	activity.value = await getUserActivity();
 })
+
 
 watch(progress, () => {
 	if (progress.value === 100) {
