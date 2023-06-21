@@ -16,7 +16,10 @@
 
 	<hr />
 
-	<Button @click="handleSignInWithGithub" class="w-full" label="Sign in with Github" />
+	<p class="text-center text-gray-700 mb-1">Or log in via a third party provider</p>
+	<Button style="background: #f5f5f5!important; border: 1px solid #f0f0f0; color: #2f2f2f" @click="handleSignInWithGithub"
+		class="w-full flex justify-content-center"><i class="pi pi-github mr-2"></i>Continue
+		with GitHub</Button>
 </template>
 
 <script setup lang="ts">
@@ -80,5 +83,3 @@ watch(showPassword, (value) => {
 
 
 </script>
-
-<style scoped></style>
