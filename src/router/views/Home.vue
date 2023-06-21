@@ -1,26 +1,19 @@
 <script setup lang="ts">
-import Header from "../../components/Header.vue";
 import SelectButton from "primevue/selectbutton";
 import { useNow, useStorage } from "@vueuse/core";
-import { computed, defineAsyncComponent, onMounted, reactive, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 import { supabase } from '../../supabase';
-import Toast from "primevue/toast";
 import { useToast } from 'primevue/usetoast';
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
 import useUser from "../../composables/use-user";
-import DynamicDialog from 'primevue/dynamicdialog';
 import Accordion from "primevue/accordion";
 import AccordionTab from 'primevue/accordiontab';
 
 
 const confirm = useConfirm();
-
 
 const { user, getUserActivity } = useUser();
 
@@ -66,14 +59,6 @@ const todayActivity = computed(() => {
 	if (activity.value.length === 0) return [];
 	return activity.value?.filter((a: any) => useDateFormat(a.log_time, 'MM-DD-YYYY').value === useDateFormat(useNow(), 'MM-DD-YYYY').value);
 });
-
-const items = ref([
-	{ separator: true },
-	{ label: 'New', icon: 'pi pi-fw pi-plus' },
-	{ label: 'Delete', icon: 'pi pi-fw pi-trash' },
-	{ separator: true }
-]);
-
 
 
 const emojis = ["💦", "💧", "🌊", "💦", "💧", "🌊", "🐬"];
@@ -121,7 +106,6 @@ const progress = computed(() => {
 
 watch(user, async () => {
 
-	activity.value = await getUserActivity();
 })
 
 watch(progress, () => {
@@ -174,7 +158,6 @@ const addToTotal = async (e: MouseEvent) => {
 
 }
 
-const loginButtonLoading = ref(false);
 const dataTableData = computed(() => {
 	return activity.value?.slice().reverse();
 });
@@ -182,6 +165,16 @@ const dataTableData = computed(() => {
 onMounted(async () => {
 	if (!user.value) {
 		const { data, error } = await supabase.auth.getSession();
+		if (error) {
+			toast.add({
+				severity: "error",
+				summary: "Error refreshing session",
+				detail: "Try logging in again.",
+				life: 0,
+				group: 'tr'
+			});
+		}
+		activity.value = await getUserActivity();
 	}
 });
 </script>
