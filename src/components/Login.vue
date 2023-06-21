@@ -7,12 +7,16 @@
 			<InputText ref="passwordRef" type="password" class="w-full" v-model="login.password" placeholder="Password" />
 
 			<div class="flex">
-				<Checkbox :binary="true" v-model="showPassword" input-id="showPassword" class="mr-2" />
-				<label for="showPassword">Show password</label>
+				<Checkbox :binary="true" v-model="showPassword" input-id="showPasswordLogin" class="mr-2" />
+				<label for="showPasswordLogin">Show password</label>
 			</div>
 			<Button class="align-self-end" type="submit">Login</Button>
 		</div>
 	</form>
+
+	<hr />
+
+	<Button @click="handleSignInWithGithub" class="w-full" label="Sign in with Github" />
 </template>
 
 <script setup lang="ts">
@@ -31,6 +35,15 @@ const login = reactive({
 	email: "",
 	password: "",
 });
+
+const handleSignInWithGithub = async () => {
+
+	const { data, error } = await supabase.auth.signInWithOAuth({
+		provider: 'github',
+	})
+
+}
+
 const handleLogin = async () => {
 
 	const { data, error } = await supabase.auth.signInWithPassword({
