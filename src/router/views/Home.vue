@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
 import SelectButton from "primevue/selectbutton";
 import { useNow, useStorage } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
@@ -216,17 +218,14 @@ onMounted(async () => {
 	<div class="container my-4">
 		<Accordion v-if="user" :collapsed="true" :toggleable="true">
 			<AccordionTab header="List of all times you've logged water">
-				<table class="p-datatable-table">
-					<tr>
-						<th>Time</th>
-						<th>Amount Logged</th>
-					</tr>
-					<tr v-for="a in dataTableData" :key="a.id">
-						<td>{{ new Date(a.log_time).toLocaleString() }}</td>
-						<td>{{ a.amount_logged }}oz</td>
-					</tr>
-				</table>
-
+				<DataTable :value="dataTableData" :paginator="true" :rows="25" :rowsPerPageOptions="[25, 50, 100]">
+					<Column field="log_time" header="Time">
+						<template #body="slotProps">
+							{{ new Date(slotProps.data.log_time).toLocaleString() }}
+						</template>
+					</Column>
+					<Column field="amount_logged" header="Amount Logged"></Column>
+				</DataTable>
 			</AccordionTab>
 		</Accordion>
 	</div>
