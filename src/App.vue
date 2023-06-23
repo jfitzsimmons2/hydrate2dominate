@@ -1,19 +1,9 @@
 <script setup lang="ts">
 import Header from "./components/Header.vue";
-import { onMounted } from "vue";
-import { supabase } from './supabase';
 import Toast from "primevue/toast";
 import ConfirmDialog from 'primevue/confirmdialog';
-import useUser from "./composables/use-user";
 import DynamicDialog from 'primevue/dynamicdialog';
 
-const { user } = useUser();
-
-onMounted(async () => {
-	if (!user.value) {
-		const { data, error } = await supabase.auth.getSession();
-	}
-});
 </script>
 
 <template>

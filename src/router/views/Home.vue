@@ -10,14 +10,14 @@ import { supabase } from '../../supabase';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
-import useUser from "../../composables/use-user";
+import useUser, { user } from "../../composables/use-user";
 import Accordion from "primevue/accordion";
 import AccordionTab from 'primevue/accordiontab';
 
 
 const confirm = useConfirm();
 
-const { user, getUserActivity } = useUser();
+const { getUserActivity } = useUser();
 
 const handleResetClick = async () => {
 	if (user.value) {
@@ -55,11 +55,11 @@ const handleResetClick = async () => {
 
 const toast = useToast();
 
+const today = useDateFormat(new Date(), 'MM-DD-YYYY').value;
 
 const activity = ref([] as any[]);
 const todayActivity = computed(() => {
-	if (activity.value.length === 0) return [];
-	return activity.value?.filter((a: any) => useDateFormat(a.log_time, 'MM-DD-YYYY').value === useDateFormat(useNow(), 'MM-DD-YYYY').value);
+	return activity.value?.filter((a: any) => useDateFormat(a.log_time, 'MM-DD-YYYY').value === today) ?? [];//
 });
 
 
@@ -106,12 +106,6 @@ const progress = computed(() => {
 	}
 });
 
-watch(user, async () => {
-
-	activity.value = await getUserActivity();
-})
-
-
 watch(progress, () => {
 	if (progress.value === 100) {
 		toast.add({
@@ -157,14 +151,7 @@ const addToTotal = async (e: MouseEvent) => {
 			y: e.clientY,
 		}),
 	});
-
-
-
 }
-
-const dataTableData = computed(() => {
-	return activity.value?.slice().reverse();
-});
 
 onMounted(async () => {
 	if (!user.value) {
@@ -178,9 +165,14 @@ onMounted(async () => {
 				group: 'tr'
 			});
 		}
-		activity.value = await getUserActivity();
 	}
+	activity.value = await getUserActivity();
 });
+
+const dataTableData = computed(() => {
+	return activity.value?.slice().reverse();
+});
+
 </script>
 
 <template>

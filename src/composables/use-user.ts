@@ -4,19 +4,24 @@ import { supabase } from "../supabase";
 import { useToast } from "primevue/usetoast";
 
 export const user = ref();
+supabase.auth.onAuthStateChange((event, session) => {
+  if (import.meta.env.DEV) {
+    console.log("event", event, "session", session);
+  }
+
+  if (
+    event === "SIGNED_IN" ||
+    event === "TOKEN_REFRESHED" ||
+    event === "INITIAL_SESSION"
+  ) {
+    user.value = session?.user;
+  } else if (event === "SIGNED_OUT") {
+    user.value = undefined;
+  }
+});
+
 const useUser = () => {
   const toast = useToast();
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (import.meta.env.DEV) {
-      console.log("event", event, "session", session);
-    }
-
-    if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-      user.value = session?.user;
-    } else if (event === "SIGNED_OUT") {
-      user.value = undefined;
-    }
-  });
 
   const updateUserPassword = async (password: string) => {
     const { data, error } = await supabase.auth.updateUser({ password });
@@ -62,7 +67,7 @@ const useUser = () => {
     }
   };
 
-  return { user, getUserActivity, updateUserPassword };
+  return { getUserActivity, updateUserPassword };
 };
 
 export default useUser;

@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ComponentPublicInstance, Ref, inject, reactive, ref, watchEffect } from "vue";
+import { Ref, inject, reactive, ref, watchEffect } from "vue";
 import useUser, { user } from "../composables/use-user";
 import Badge from "primevue/badge";
 import Checkbox from "primevue/checkbox";
