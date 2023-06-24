@@ -20,6 +20,9 @@
 	<Button style="background: #f5f5f5!important; border: 1px solid #f0f0f0; color: #2f2f2f" @click="handleSignInWithGithub"
 		class="w-full flex justify-content-center"><i class="pi pi-github mr-2"></i>Continue
 		with GitHub</Button>
+	<Button style="background: #f5f5f5!important; border: 1px solid #f0f0f0; color: #2f2f2f" @click="handleSignInWithGoogle"
+		class="w-full mt-2 flex justify-content-center"><i class="pi pi-googl emr-2"></i>Continue
+		with Google</Button>
 </template>
 
 <script setup lang="ts">
@@ -39,12 +42,16 @@ const login = reactive({
 	password: "",
 });
 
-const handleSignInWithGithub = async () => {
+const handleSignInWithGoogle = async () => {
+	const { data, error } = await supabase.auth.signInWithOAuth({
+		provider: 'google',
+	})
+}
 
+const handleSignInWithGithub = async () => {
 	const { data, error } = await supabase.auth.signInWithOAuth({
 		provider: 'github',
 	})
-
 }
 
 const handleLogin = async () => {
