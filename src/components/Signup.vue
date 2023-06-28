@@ -33,6 +33,7 @@ const signup = reactive({
 	email: "",
 	password: "",
 });
+
 const handleSignup = async () => {
 
 	const { data, error } = await supabase.auth.signUp({
@@ -69,8 +70,4 @@ watch(showPassword, (value) => {
 	}
 })
 
-
-
 </script>
-
-<style scoped></style>

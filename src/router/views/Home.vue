@@ -10,7 +10,7 @@ import { supabase } from '../../supabase';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
-import useUser, { user } from "../../composables/use-user";
+import useUser, { user, activity } from "../../composables/use-user";
 import Accordion from "primevue/accordion";
 import AccordionTab from 'primevue/accordiontab';
 
@@ -57,7 +57,6 @@ const toast = useToast();
 
 const today = useDateFormat(new Date(), 'MM-DD-YYYY').value;
 
-const activity = ref([] as any[]);
 const todayActivity = computed(() => {
 	return activity.value?.filter((a: any) => useDateFormat(a.log_time, 'MM-DD-YYYY').value === today) ?? [];//
 });

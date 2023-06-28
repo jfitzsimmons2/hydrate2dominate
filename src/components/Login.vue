@@ -33,9 +33,12 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
+import { user } from '../composables/use-user';
+
 const dialogRef = inject('dialogRef') as Ref<DynamicDialogInstance>;
 const passwordRef = ref();
 const showPassword = ref(false);
+
 const toast = useToast();
 const login = reactive({
 	email: "",
@@ -68,6 +71,7 @@ const handleLogin = async () => {
 			group: 'tr'
 		});
 		dialogRef.value?.close();
+		user.value = data?.session.user;
 	}
 	if (error) {
 		toast.add({

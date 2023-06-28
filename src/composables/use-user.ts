@@ -4,7 +4,8 @@ import { supabase } from "../supabase";
 import { useToast } from "primevue/usetoast";
 
 export const user = ref();
-supabase.auth.onAuthStateChange((event, session) => {
+export const activity = ref([] as any[]);
+supabase.auth.onAuthStateChange(async (event, session) => {
   if (import.meta.env.DEV) {
     console.log("event", event, "session", session);
   }
@@ -15,6 +16,7 @@ supabase.auth.onAuthStateChange((event, session) => {
     event === "INITIAL_SESSION"
   ) {
     user.value = session?.user;
+    activity.value = await useUser().getUserActivity();
   } else if (event === "SIGNED_OUT") {
     user.value = undefined;
   }
