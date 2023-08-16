@@ -8,6 +8,7 @@ import InputNumber from "primevue/inputnumber";
 import ToastService from "primevue/toastservice";
 import ConfirmationService from "primevue/confirmationservice";
 import DialogService from "primevue/dialogservice";
+import Tooltip from "primevue/tooltip";
 import { router } from "./router";
 
 import "primeflex/primeflex.css";
@@ -21,6 +22,8 @@ app.use(PrimeVue);
 app.use(ToastService);
 app.use(ConfirmationService);
 app.use(DialogService);
+
+app.directive("tooltip", Tooltip);
 app.component("Button", Button);
 app.component("InputText", InputText);
 app.component("InputNumber", InputNumber);

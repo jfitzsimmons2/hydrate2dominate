@@ -14,7 +14,6 @@ import useUser, { user, activity } from "../../composables/use-user";
 import Accordion from "primevue/accordion";
 import AccordionTab from 'primevue/accordiontab';
 
-
 const confirm = useConfirm();
 
 const { getUserActivity } = useUser();
@@ -26,7 +25,6 @@ const handleResetClick = async () => {
 			header: 'Confirm reset',
 			acceptIcon: 'pi pi-check',
 			accept: async () => {
-
 				const { error } = await supabase.rpc('delete_daily_activity_by_date', {
 					"p_delete_date": useDateFormat(useNow(), 'YYYY-MM-DD').value,
 				})
@@ -62,7 +60,7 @@ const todayActivity = computed(() => {
 });
 
 
-const emojis = ["💦", "💧", "🌊", "💦", "💧", "🌊", "🐬"];
+const emojis = ["💦", "💧", "🌊", "💧", "🌊", "🐬"];
 
 const defaults = {
 	bottleSize: 8,
@@ -172,10 +170,60 @@ const dataTableData = computed(() => {
 	return activity.value?.slice().reverse();
 });
 
+const groupByDate = (acc: any, cur: any) => {
+	const date = useDateFormat(cur.log_time, 'MM-DD-YYYY').value;
+	if (!acc[date]) {
+		acc[date] = [];
+	}
+	acc[date].push(cur);
+	return acc;
+};
+
+const dateReduce = computed(() => {
+	return activity.value?.reduce(groupByDate, {}) ?? {};
+});
+
+const notFutureDate = (date: Date) => {
+	return date <= new Date();
+};
+
+const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
+	// Validate input hex color
+	if (!/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hexColor)) {
+		throw new Error('Invalid hex color format');
+	}
+
+	// Remove the '#' character from the beginning of hexColor
+	hexColor = hexColor.replace('#', '');
+
+	// Convert hex to RGB
+	let r, g, b;
+	if (hexColor.length === 3) {
+		r = parseInt(hexColor[0] + hexColor[0], 16);
+		g = parseInt(hexColor[1] + hexColor[1], 16);
+		b = parseInt(hexColor[2] + hexColor[2], 16);
+	} else {
+		r = parseInt(hexColor.substring(0, 2), 16);
+		g = parseInt(hexColor.substring(2, 4), 16);
+		b = parseInt(hexColor.substring(4, 6), 16);
+	}
+
+	// Darken the color by reducing brightness
+	r = Math.max(0, r - n);
+	g = Math.max(0, g - n);
+	b = Math.max(0, b - n);
+
+	// Convert RGB back to hex
+	const darkenedHexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+	return darkenedHexColor;
+}
+
+
 </script>
 
 <template>
-	<div class=" flex flex-column sm:flex-row justify-content-center gap-6">
+	<div class="flex flex-column sm:flex-row justify-content-center gap-6">
 		<div class="flex flex-column gap-4">
 			<div class="flex align-items-center gap-2">
 				<div class="flex flex-column">
@@ -209,11 +257,31 @@ const dataTableData = computed(() => {
 	</div>
 
 	<div class="container my-4">
+		<div class="teh-grid">
+			<template v-for="i in    365   " :key="i">
+				<div class="font-bold text-sm" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
+					0).setDate(i), 'MM-DD-YYYY').value}: ${dateReduce[useDateFormat(new Date(new Date().getFullYear(),
+						0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
+							cur?.amount_logged, 0) ?? 0}oz`" :style="{
+				height: '1rem', width: '1rem',
+				backgroundColor: darkenHexColor('#cee9ff', dateReduce[useDateFormat(new Date(new Date().getFullYear(),
+					0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
+						cur?.amount_logged, 0) ?? 0)
+			}" v-if="notFutureDate(new Date(new Date().getFullYear(), 0, i))">
+
+				</div>
+			</template>
+		</div>
+
+	</div>
+
+	<div class="container my-4">
 		<Accordion v-if="user" :collapsed="true" :toggleable="true">
 			<AccordionTab header="List of all times you've logged water">
 				<DataTable :value="dataTableData" :paginator="true" :rows="25" :rowsPerPageOptions="[25, 50, 100]">
 					<Column field="log_time" header="Time">
 						<template #body="slotProps">
+							{{ `${new Date(slotProps.data.log_time).getDate()} / ${new Date(slotProps.data.log_time).getMonth()}` }}
 							{{ new Date(slotProps.data.log_time).toLocaleString() }}
 						</template>
 					</Column>
@@ -226,6 +294,16 @@ const dataTableData = computed(() => {
 
 
 <style>
+.teh-grid {
+	/* css grid for each day of the year */
+	display: grid;
+	grid-template-rows: repeat(7, 1fr);
+	grid-template-columns: repeat(52, 1fr);
+	gap: 0.25rem;
+	width: 64.75rem;
+	grid-auto-flow: column;
+}
+
 .p-datatable-table th {
 	text-align: left !important;
 }
