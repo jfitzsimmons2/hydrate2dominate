@@ -121,6 +121,7 @@ watch(progress, () => {
 });
 
 const addToTotal = async (e: MouseEvent) => {
+	debugger
 	if (user.value) {
 		const { data, error } = await supabase.rpc('insert_daily_activity', {
 			p_amount_logged: bottleSize.value
@@ -218,20 +219,18 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 
 	return darkenedHexColor;
 }
-
-
 </script>
 
 <template>
-	<div class="flex flex-column sm:flex-row justify-content-center gap-6">
-		<div class="flex flex-column gap-4">
-			<div class="flex align-items-center gap-2">
-				<div class="flex flex-column">
+	<div class="flex flex-col sm:flex-row justify-between items-start gap-6">
+		<div class="flex flex-col gap-4">
+			<div class="flex items-center gap-2">
+				<div class="flex flex-col">
 					<label class="font-bold" for="goal">Goal (in oz)</label>
 					<InputNumber id="goal" v-model.number="state.goal" /><small>How much water are you trying to get in?</small>
 				</div>
 			</div>
-			<div class="flex flex-column justify-content-center gap-2">
+			<div class="flex flex-col justify-center gap-2">
 				<label class="font-bold" for="bottleSize">Bottle Size</label>
 				<SelectButton v-model="state.bottleSize" :options="options" optionLabel="label" optionValue="value"
 					aria-labelledby="basic" />
@@ -242,13 +241,13 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 			<Button ref="logButton" @click="addToTotal" :label="`Log ${bottleSize}oz`" />
 		</div>
 
-		<div class="flex flex-grow-1 flex-column gap-2">
-			<div class="flex align-items-center justify-content-center gap-2">
+		<div class="flex flex-grow-1 flex-col gap-2">
+			<div class="flex items-center justify-center gap-2">
 				<div class="font-bold inline-block text-4xl">
 					{{ total }} / {{ state.goal }}oz
 				</div>
 			</div>
-			<div class="flex justify-content-center">
+			<div class="flex justify-center">
 				<Knob ref="knob" valueTemplate="{value}%" :size="200" :readonly="true" v-model="progress"></Knob>
 			</div>
 			<Button class="p-button-link" label="Reset" @click="handleResetClick" />
@@ -263,7 +262,7 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 					0).setDate(i), 'MM-DD-YYYY').value}: ${dateReduce[useDateFormat(new Date(new Date().getFullYear(),
 						0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
 							cur?.amount_logged, 0) ?? 0}oz`" :style="{
-				height: '1rem', width: '1rem',
+				height: '.5rem', width: '.5rem',
 				backgroundColor: darkenHexColor('#cee9ff', dateReduce[useDateFormat(new Date(new Date().getFullYear(),
 					0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
 						cur?.amount_logged, 0) ?? 0)
@@ -300,7 +299,7 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 	grid-template-rows: repeat(7, 1fr);
 	grid-template-columns: repeat(52, 1fr);
 	gap: 0.25rem;
-	width: 64.75rem;
+	width: 32.75rem;
 	grid-auto-flow: column;
 }
 

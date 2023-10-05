@@ -1,41 +1,54 @@
 <template>
-	<header class="container flex flex-wrap align-items-center gap-2 justify-content-between mb-4">
-		<a href="/" class="flex align-items-center gap-2 no-underline">
+	<header class="container flex flex-wrap items-center gap-2 justify-between mb-4">
+		<a href="/" class="flex items-center gap-2 no-underline">
 			<img src="/favicon.ico" style="width: 2.5rem; height: 2.5rem;" />
-			<div class="flex flex-column">
-				<h1 class="text-lg flex align-items-center gap-2 m-0">
-					<span><span class="text-blue-600">Hydrate</span><span class="text-blue-700">2</span><span
-							class="text-blue-600">Dominate</span></span>
+			<div class="flex flex-col">
+				<h1 class="text-lg flex items-center gap-2 m-0">
+					<span><span class="text-blue-600 dark:text-blue-100">Hydrate</span><span
+							class="text-blue-700 dark:text-blue-200">2</span><span
+							class="text-blue-600 dark:text-blue-100">Dominate</span></span>
 				</h1>
-				<p class="m-0 text-gray-800 text-sm">{{ hydrationQuote() }}</p>
+				<p class="m-0 text-gray-800 dark:text-gray-100 text-sm">{{ hydrationQuote() }}</p>
 			</div>
 		</a>
-		<div v-if="!user">
-			<Button @click="handleLoginClick" text><i class="pi pi-user mr-2"></i>
-				Login</Button>
-		</div>
-		<div v-else class="flex align-items-center gap-1">
-			<Button @click="toggleMenu" icon="pi pi-bars" class="p-button-rounded p-button-text" />
-			<Menu ref="menu" :model="menuItems" id="overlay_menu" style="width: auto;" :popup="true">
-				<template #start>
-					<p class="m-0 py-2 px-3"><strong>Logged in as</strong><br /> {{ user.email }}</p>
-				</template>
-				<template #end>
-					<button @click="handleLogoutClick"
-						class="w-full p-link flex align-items-center py-2 px-3 text-color hover:surface-200 border-noround">
-						<i class="pi pi-sign-out" />
-						<span class="ml-2">Log Out</span>
-					</button>
-				</template>
-			</Menu>
 
+		<div class="flex gap-2">
+			<Button
+				:icon="darkMode ? 'line-md moon-filled-to-sunny-filled-loop-transition' : 'line-md moon-rising-filled-alt-loop'"
+				rounded outlined @click="toggleDarkMode" />
+			<div v-if="!user">
+				<Button @click="handleLoginClick" text><i class="prime-bars mr-2"></i>
+					Login</Button>
+			</div>
+			<div v-else class="flex items-center gap-1">
+				<Button @click="toggleMenu" class="p-button-rounded p-button-text">
+					<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+						<path fill="currentColor"
+							d="M19 12.75H5a.75.75 0 0 1 0-1.5h14a.75.75 0 0 1 0 1.5Zm0-4.5H5a.75.75 0 0 1 0-1.5h14a.75.75 0 0 1 0 1.5Zm0 9H5a.75.75 0 0 1 0-1.5h14a.75.75 0 0 1 0 1.5Z">
+						</path>
+					</svg>
+				</Button>
+				<Menu ref="menu" :model="menuItems" id="overlay_menu" style="width: auto;" :popup="true">
+
+					<template #start>
+						<p class="m-0 py-2 px-3"><strong>Logged in as</strong><br /> {{ user.email }}</p>
+					</template>
+					<template #end>
+						<button @click="handleLogoutClick"
+							class="w-full p-link flex items-center py-2 px-3 text-color hover:surface-200 border-noround">
+							<i class="pi pi-sign-out" />
+							<span class="ml-2">Log Out</span>
+						</button>
+					</template>
+				</Menu>
+			</div>
 		</div>
 	</header>
 </template>
 
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from 'vue';
-
+import { useLocalStorage, useStorage } from '@vueuse/core';
 import Login from './Login.vue';
 import useUser, { user } from '../composables/use-user';
 import Menu from 'primevue/menu';
@@ -49,6 +62,16 @@ const confirm = useConfirm();
 const menu = ref();
 const dialog = useDialog();
 const toast = useToast();
+
+const darkMode = useStorage('my-dark-mode', false)
+darkMode.value ? document.querySelector('html')?.classList.add('dark') : document.querySelector('html')?.classList.remove('dark');
+
+
+const toggleDarkMode = () => {
+	darkMode.value = !darkMode.value;
+	document.querySelector('html')?.classList.toggle('dark');
+};
+
 const toggleMenu = (event: Event) => {
 	menu.value.toggle(event);
 };

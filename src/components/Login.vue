@@ -2,7 +2,7 @@
 	<p>Enter your email address and password to login.</p>
 
 	<form @submit.prevent="handleLogin">
-		<div class="flex flex-column gap-2">
+		<div class="flex flex-col gap-2">
 			<InputText type="text" class="w-full" v-model="login.email" placeholder="Email address" />
 			<InputText ref="passwordRef" type="password" class="w-full" v-model="login.password" placeholder="Password" />
 
@@ -18,10 +18,10 @@
 
 	<p class="text-center text-gray-700 mb-1">Or log in via a third party provider</p>
 	<Button style="background: #f5f5f5!important; border: 1px solid #f0f0f0; color: #2f2f2f" @click="handleSignInWithGithub"
-		class="w-full flex justify-content-center"><i class="pi pi-github mr-2"></i>Continue
+		class="w-full flex justify-center"><i class="pi pi-github mr-2"></i>Continue
 		with GitHub</Button>
 	<Button style="background: #f5f5f5!important; border: 1px solid #f0f0f0; color: #2f2f2f" @click="handleSignInWithGoogle"
-		class="w-full mt-2 flex justify-content-center"><i class="pi pi-googl emr-2"></i>Continue
+		class="w-full mt-2 flex justify-center"><i class="pi pi-googl emr-2"></i>Continue
 		with Google</Button>
 </template>
 
@@ -32,10 +32,10 @@ import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
-import { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
+
 import { user } from '../composables/use-user';
 
-const dialogRef = inject('dialogRef') as Ref<DynamicDialogInstance>;
+const dialogRef = inject('dialogRef') as Ref<any>;
 const passwordRef = ref();
 const showPassword = ref(false);
 

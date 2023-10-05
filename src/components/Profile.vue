@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<div class="flex flex-column gap-2">
+		<div class="flex flex-col gap-2">
 			<p class="m-0">Logged in as {{ user?.email }}</p>
 			<div class="m-0 flex gap-2">Signup type:
 				<Badge :value="provider" v-for="provider in user?.app_metadata.providers" :key="provider" />
 			</div>
-			<div class="flex flex-column gap-1">
+			<div class="flex flex-col gap-1">
 				<label class="font-bold" for="password">Change password</label>
 				<InputText ref="passwordRef" type="password" id="password" v-model="profile.password"
 					aria-describedby="password-help" />
@@ -27,9 +27,9 @@ import Badge from "primevue/badge";
 import Checkbox from "primevue/checkbox";
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
-import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 
-const dialogRef = inject("dialogRef") as Ref<DynamicDialogInstance>
+
+const dialogRef = inject("dialogRef") as Ref<any>
 
 const { updateUserPassword } = useUser();
 const passwordRef = ref();

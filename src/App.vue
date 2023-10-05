@@ -14,7 +14,7 @@ import DynamicDialog from 'primevue/dynamicdialog';
 		<RouterView />
 	</div>
 	<footer>
-		<div class="container flex justify-content-center gap-2">
+		<div class="container flex justify-center gap-2">
 			<RouterLink to="/">Home</RouterLink>
 			<RouterLink to="/privacy-policy">Privacy Policy</RouterLink>
 		</div>

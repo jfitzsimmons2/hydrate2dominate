@@ -2,7 +2,7 @@
 	<p>Enter your email address and password to sign up.</p>
 
 	<form @submit.prevent="handleSignup">
-		<div class="flex flex-column gap-2">
+		<div class="flex flex-col gap-2">
 			<InputText type="text" class="w-full" v-model="signup.email" placeholder="Email address" />
 			<InputText ref="passwordRef" type="password" class="w-full" v-model="signup.password" placeholder="Password" />
 
@@ -23,9 +23,9 @@ import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
-import { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
 
-const dialogRef = inject('dialogRef') as Ref<DynamicDialogInstance>;
+
+const dialogRef = inject('dialogRef') as Ref<any>;
 const passwordRef = ref();
 const showPassword = ref(false);
 const toast = useToast();
