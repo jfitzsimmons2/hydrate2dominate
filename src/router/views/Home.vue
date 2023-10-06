@@ -121,12 +121,13 @@ watch(progress, () => {
 });
 
 const addToTotal = async (e: MouseEvent) => {
-	debugger
 	if (user.value) {
+		console.log(bottleSize.value)
+
 		const { data, error } = await supabase.rpc('insert_daily_activity', {
 			p_amount_logged: bottleSize.value
 		});
-
+		console.log({ data, error })
 		if (error) {
 			toast.add({
 				severity: "error",
@@ -222,7 +223,7 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 </script>
 
 <template>
-	<div class="flex flex-col sm:flex-row justify-between items-start gap-6">
+	<div class="flex flex-col sm:flex-row justify-between items-start gap-6  my-8">
 		<div class="flex flex-col gap-4">
 			<div class="flex items-center gap-2">
 				<div class="flex flex-col">
@@ -272,22 +273,7 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 			</template>
 		</div>
 
-	</div>
 
-	<div class="container my-4">
-		<Accordion v-if="user" :collapsed="true" :toggleable="true">
-			<AccordionTab header="List of all times you've logged water">
-				<DataTable :value="dataTableData" :paginator="true" :rows="25" :rowsPerPageOptions="[25, 50, 100]">
-					<Column field="log_time" header="Time">
-						<template #body="slotProps">
-							{{ `${new Date(slotProps.data.log_time).getDate()} / ${new Date(slotProps.data.log_time).getMonth()}` }}
-							{{ new Date(slotProps.data.log_time).toLocaleString() }}
-						</template>
-					</Column>
-					<Column field="amount_logged" header="Amount Logged"></Column>
-				</DataTable>
-			</AccordionTab>
-		</Accordion>
 	</div>
 </template>
 

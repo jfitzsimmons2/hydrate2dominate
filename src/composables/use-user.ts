@@ -23,13 +23,13 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 });
 
 const useUser = () => {
-  // const toast = useToast();
+  const toast = useToast();
 
   const updateUserPassword = async (password: string) => {
     const { data, error } = await supabase.auth.updateUser({ password });
 
     if (!error) {
-      console.warn({
+      toast.add({
         severity: "success",
         summary: "Password updated",
         detail: "Your password has been updated",
@@ -39,7 +39,7 @@ const useUser = () => {
     }
 
     if (error) {
-      console.warn({
+      toast.add({
         severity: "error",
         summary: "Error updating password",
         detail: error.message,
@@ -59,7 +59,7 @@ const useUser = () => {
     }
 
     if (error) {
-      console.warn({
+      toast.add({
         severity: "error",
         summary: "Error getting activity",
         detail: error.message,

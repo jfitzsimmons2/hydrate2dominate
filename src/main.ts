@@ -29,6 +29,12 @@ const CustomTailwind = usePassThrough(
       label: ({ props }: { props: ButtonProps }) =>
         props.icon ? "hidden" : "",
     },
+    knob: {
+      label: "dark:fill-slate-50",
+    },
+    tooltip: {
+      text: "text-slate-800",
+    },
   },
   {
     mergeSections: true,
