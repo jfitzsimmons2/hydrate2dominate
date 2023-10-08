@@ -13,9 +13,12 @@ import DynamicDialog from 'primevue/dynamicdialog';
 		</div>
 		<footer>
 			<div class="container ">
-				<div class="flex justify-center gap-2 mt-8">
+				<div class="flex justify-center items-center gap-2 mt-8">
+					<i class="line-md line-md-beer-alt-filled-loop text-blue-700 text-2xl" />
 					<RouterLink to="/">Home</RouterLink>
+					<span class="text-gray-400">//</span>
 					<RouterLink to="/privacy-policy">Privacy Policy</RouterLink>
+					<i class="line-md line-md-beer-alt-filled-loop text-blue-700 text-2xl" />
 				</div>
 			</div>
 		</footer>

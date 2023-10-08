@@ -106,12 +106,10 @@ watch(progress, () => {
 
 const addToTotal = async (e: MouseEvent) => {
 	if (user.value) {
-		console.log(bottleSize.value)
-
 		const { data, error } = await supabase.rpc('insert_daily_activity', {
 			p_amount_logged: bottleSize.value
 		});
-		console.log({ data, error })
+
 		if (error) {
 
 		} else {
@@ -194,10 +192,7 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 }
 
 const handleBottleChange = (e: SelectButtonChangeEvent) => {
-	console.log(state.value.bottleSize)
-	console.log(e)
 	if (e.value !== null) {
-		console.log('e.value is ', e.value)
 		state.value.bottleSize = e.value;
 	}
 }
@@ -237,18 +232,23 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 
 	</div>
 
-	<div class="container my-4">
-		<div class="teh-grid">
-			<template v-for="i in    365   " :key="i">
-				<div class="font-bold text-sm" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
+	<div class="container my-4 mx-auto">
+		<div class="teh-grid mx-auto">
+			<template v-for="i in 365" :key="i">
+				<div class="w-2 h-2" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
 					0).setDate(i), 'MM-DD-YYYY').value}: ${dateReduce[useDateFormat(new Date(new Date().getFullYear(),
 						0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
 							cur?.amount_logged, 0) ?? 0}oz`" :style="{
-				height: '.5rem', width: '.5rem',
+
 				backgroundColor: darkenHexColor('#cee9ff', dateReduce[useDateFormat(new Date(new Date().getFullYear(),
 					0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
 						cur?.amount_logged, 0) ?? 0)
 			}" v-if="notFutureDate(new Date(new Date().getFullYear(), 0, i))">
+
+
+				</div>
+				<div class="bg-slate-100 w-2 h-2" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
+					0).setDate(i), 'MM-DD-YYYY').value}`" v-else>
 
 				</div>
 			</template>
@@ -263,11 +263,22 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 .teh-grid {
 	/* css grid for each day of the year */
 	display: grid;
-	grid-template-rows: repeat(7, 1fr);
-	grid-template-columns: repeat(52, 1fr);
+	grid-template-rows: repeat(52, 1fr);
+	grid-template-columns: repeat(7, 1fr);
+	width: calc((0.5rem * 7) + (0.25rem * 6));
 	gap: 0.25rem;
-	width: 32.75rem;
-	grid-auto-flow: column;
+	transform: rotate(180deg);
+	grid-auto-flow: row;
+}
+
+@media screen and (min-width: 640px) {
+	.teh-grid {
+		transform: rotate(0);
+		width: 100%;
+		grid-template-rows: repeat(7, 1fr);
+		grid-template-columns: repeat(52, 1fr);
+		grid-auto-flow: column;
+	}
 }
 
 .p-datatable-table th {

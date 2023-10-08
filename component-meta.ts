@@ -58,7 +58,6 @@ const tsconfigChecker = createComponentMetaChecker(
 
 const filterMeta = (meta: ComponentMeta): ComponentApi => {
   const clonedMeta: ComponentMeta = JSON.parse(JSON.stringify(meta));
-  console.log(clonedMeta);
 
   // Exclude global props
   const props: ComponentApiProps[] = [];
@@ -94,14 +93,10 @@ const components = fg.sync(["../src/components/**/*.vue"], {
   absolute: true,
 });
 
-console.log(components);
-
 // Generate component meta
 components.forEach((componentPath) => {
   const componentName = parse(componentPath).name;
 
-  console.log(componentName);
-  console.log(componentPath);
   // Thanks: https://futurestud.io/tutorials/node-js-get-a-file-name-with-or-without-extension
   const meta = filterMeta(tsconfigChecker.getComponentMeta(componentPath));
 

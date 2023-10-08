@@ -1,10 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { getIconsCSS } from "@iconify/utils";
 import { locate } from "@iconify/json";
-
 import prime from "@iconify/json/json/prime.json" assert { type: "json" };
-console.log(prime);
-Object.keys(prime.icons);
+
 /**
  * List of icons. Key is icon set prefix, value is array of icons
  *
@@ -15,6 +13,7 @@ const icons = {
   "line-md": [
     "moon-rising-filled-alt-loop",
     "moon-filled-to-sunny-filled-loop-transition",
+    "beer-alt-filled-loop",
   ],
 };
 
@@ -27,7 +26,6 @@ for (const prefix in icons) {
   // Load file and parse it
   /** @type {import("@iconify/types").IconifyJSON} */
   const iconSet = JSON.parse(await readFile(filename, "utf8"));
-  console.log(icons);
   // Get CSS
   const css = getIconsCSS(iconSet, icons[prefix], {
     iconSelector: prefix === "prime" ? ".pi-{name}" : ".{prefix}-{name}",
