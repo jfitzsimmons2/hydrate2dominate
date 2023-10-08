@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-import SelectButton from "primevue/selectbutton";
+import SelectButton, { SelectButtonChangeEvent } from "primevue/selectbutton";
 import { useNow, useStorage } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
 import { emojisplosion, emojisplosions } from "emojisplosion";
 import Knob from "primevue/knob";
 import { supabase } from '../../supabase';
-import { useToast } from 'primevue/usetoast';
 import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
 import useUser, { user, activity } from "../../composables/use-user";
-import Accordion from "primevue/accordion";
-import AccordionTab from 'primevue/accordiontab';
+
 
 const confirm = useConfirm();
 
 const { getUserActivity } = useUser();
 
 const handleResetClick = async () => {
+
+
 	if (user.value) {
 		confirm.require({
 			message: 'Resetting will delete all your activity for today. Are you sure you want to continue?',
@@ -30,20 +28,13 @@ const handleResetClick = async () => {
 				})
 				if (!error) {
 
-					toast.add({
-						severity: "info",
-						summary: "Reset successful",
-						detail: "All your activity for today has been deleted.",
-						life: 5000,
-						group: 'tr'
-					});
 				}
 				activity.value = [];
 				activity.value = await getUserActivity();
 
 			},
 			reject: () => {
-				toast.add({ severity: 'info', summary: 'Operation canceled', detail: 'Nothing has been reset', life: 3000, group: 'tr' });
+				alert("REJECTED")
 			}
 		});
 	} else {
@@ -51,7 +42,6 @@ const handleResetClick = async () => {
 	};
 };
 
-const toast = useToast();
 
 const today = useDateFormat(new Date(), 'MM-DD-YYYY').value;
 
@@ -105,13 +95,7 @@ const progress = computed(() => {
 
 watch(progress, () => {
 	if (progress.value === 100) {
-		toast.add({
-			severity: "success",
-			summary: "Goal reached!",
-			detail: "You have reached your goal for the day!",
-			life: 10000,
-			group: 'tr'
-		});
+
 		const { cancel } = emojisplosions({
 			emojis,
 			emojiCount: 100,
@@ -129,13 +113,7 @@ const addToTotal = async (e: MouseEvent) => {
 		});
 		console.log({ data, error })
 		if (error) {
-			toast.add({
-				severity: "error",
-				summary: "Error code: " + error.code,
-				detail: error.message + ((error.hint) ? '<br>' + error.hint : ''),
-				life: 0,
-				group: 'tr'
-			});
+
 		} else {
 			activity.value.push(data);
 		}
@@ -156,13 +134,7 @@ onMounted(async () => {
 	if (!user.value) {
 		const { data, error } = await supabase.auth.getSession();
 		if (error) {
-			toast.add({
-				severity: "error",
-				summary: "Error refreshing session",
-				detail: "Try logging in again.",
-				life: 0,
-				group: 'tr'
-			});
+
 		}
 	}
 	activity.value = await getUserActivity();
@@ -220,6 +192,15 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 
 	return darkenedHexColor;
 }
+
+const handleBottleChange = (e: SelectButtonChangeEvent) => {
+	console.log(state.value.bottleSize)
+	console.log(e)
+	if (e.value !== null) {
+		console.log('e.value is ', e.value)
+		state.value.bottleSize = e.value;
+	}
+}
 </script>
 
 <template>
@@ -233,8 +214,8 @@ const darkenHexColor = (hexColor = '#5cb6ff', n = 0) => {
 			</div>
 			<div class="flex flex-col justify-center gap-2">
 				<label class="font-bold" for="bottleSize">Bottle Size</label>
-				<SelectButton v-model="state.bottleSize" :options="options" optionLabel="label" optionValue="value"
-					aria-labelledby="basic" />
+				<SelectButton @change="handleBottleChange" :model-value.number="state.bottleSize" :options="options"
+					optionLabel="label" optionValue="value" aria-labelledby="basic" />
 				<InputNumber v-if="state.bottleSize === 0" id="bottleSize" aria-label="Custom bottle size"
 					v-model.number="state.otherValue" />
 			</div>

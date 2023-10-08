@@ -14,11 +14,10 @@
 
 		<div class="flex gap-2">
 			<Button
-				:icon="darkMode ? 'line-md moon-filled-to-sunny-filled-loop-transition' : 'line-md moon-rising-filled-alt-loop'"
+				:icon="darkMode ? 'line-md line-md-moon-filled-to-sunny-filled-loop-transition' : 'line-md line-md-moon-rising-filled-alt-loop'"
 				rounded outlined @click="toggleDarkMode" />
 			<div v-if="!user">
-				<Button @click="handleLoginClick" text><i class="prime-bars mr-2"></i>
-					Login</Button>
+				<Button icon="pi pi-user" outlined @click="handleLoginClick" rounded />
 			</div>
 			<div v-else class="flex items-center gap-1">
 				<Button @click="toggleMenu" class="p-button-rounded p-button-text">
@@ -55,13 +54,12 @@ import Menu from 'primevue/menu';
 import { supabase } from '../supabase';
 import { useDialog } from 'primevue/usedialog';
 import { useConfirm } from 'primevue/useconfirm';
-import { useToast } from 'primevue/usetoast';
 import Profile from './Profile.vue';
 import LoginSignup from './LoginSignup.vue';
 const confirm = useConfirm();
 const menu = ref();
 const dialog = useDialog();
-const toast = useToast();
+
 
 const darkMode = useStorage('my-dark-mode', false)
 darkMode.value ? document.querySelector('html')?.classList.add('dark') : document.querySelector('html')?.classList.remove('dark');
@@ -102,16 +100,12 @@ const handleLoginClick = () => {
 	})
 };
 
+defineEmits(['logout']);
+
 const handleLogoutClick = async () => {
 	const { error } = await supabase.auth.signOut();
 	if (!error) {
-		toast.add({
-			severity: "success",
-			summary: "Logged out",
-			detail: "You have been logged out. Your logging will not be saved to your account.",
-			life: 5000,
-			group: 'tr'
-		});
+
 	}
 };
 
@@ -146,3 +140,10 @@ const hydrationQuote = () => {
 </script>
 
 <style scoped></style>
+
+<info lang="json">
+{
+	"name": "Header",
+	"description": "The header component for the app"
+}
+</info>

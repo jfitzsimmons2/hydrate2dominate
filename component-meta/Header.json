@@ -1,0 +1,23 @@
+{
+    "props": [],
+    "events": [
+        {
+            "name": "logout",
+            "type": "any[]",
+            "signature": "(event: \"logout\", ...args: any[]): void",
+            "declarations": [
+                {
+                    "file": "/Users/jfitzsim/Workspace/hydrate2dominate/node_modules/@vue/runtime-core/dist/runtime-core.d.ts",
+                    "range": [
+                        4468,
+                        4503
+                    ]
+                }
+            ],
+            "schema": [
+                "any"
+            ]
+        }
+    ],
+    "slots": []
+}

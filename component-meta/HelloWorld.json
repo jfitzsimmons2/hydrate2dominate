@@ -1,0 +1,12 @@
+{
+    "props": [
+        {
+            "name": "msg",
+            "description": "",
+            "type": "string",
+            "default": "unknown"
+        }
+    ],
+    "events": [],
+    "slots": []
+}

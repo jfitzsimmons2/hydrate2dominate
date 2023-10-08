@@ -19,16 +19,13 @@
 <script setup lang="ts">
 import { Ref, inject, reactive, ref, watch } from 'vue';
 import { supabase } from '../supabase';
-import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 
-
 const dialogRef = inject('dialogRef') as Ref<any>;
 const passwordRef = ref();
 const showPassword = ref(false);
-const toast = useToast();
 const signup = reactive({
 	email: "",
 	password: "",
@@ -41,24 +38,12 @@ const handleSignup = async () => {
 		password: signup.password,
 	});
 	if (!error) {
-		toast.add({
-			severity: "success",
-			summary: "Signup successful",
 
-			life: 5000,
-			group: 'tr'
-		});
 		dialogRef.value?.close();
 
 	}
 	if (error) {
-		toast.add({
-			severity: "error",
-			summary: "Error logging in",
-			detail: error.message,
-			life: 0,
-			group: 'tr'
-		});
+
 	}
 };
 

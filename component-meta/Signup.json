@@ -1,0 +1,12 @@
+{
+    "props": [
+        {
+            "name": "test?",
+            "description": "",
+            "type": "boolean | undefined",
+            "default": "unknown"
+        }
+    ],
+    "events": [],
+    "slots": []
+}

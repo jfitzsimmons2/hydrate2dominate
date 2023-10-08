@@ -16,11 +16,9 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { supabase } from '../supabase';
-import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
-const toast = useToast();
 const login = reactive({
 	email: "",
 });
@@ -32,22 +30,10 @@ const handleMagicLink = async () => {
 
 
 	if (!error) {
-		toast.add({
-			severity: "success",
-			summary: "Magic link sent",
 
-			life: 5000,
-			group: 'tr'
-		});
 	}
 	if (error) {
-		toast.add({
-			severity: "error",
-			summary: "Error sending magic link",
-			detail: error.message,
-			life: 0,
-			group: 'tr'
-		});
+
 	}
 };
 </script>

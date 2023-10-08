@@ -1,26 +1,27 @@
 <script setup lang="ts">
 import Header from "./components/Header.vue";
-import Toast from "primevue/toast";
 import ConfirmDialog from 'primevue/confirmdialog';
 import DynamicDialog from 'primevue/dynamicdialog';
-
 </script>
 
 <template>
-	<ConfirmDialog style="max-width: 500px;" />
-	<Toast position="top-right" group="tr" />
-	<Header />
-	<div class="container">
-		<RouterView />
-	</div>
-	<footer>
-		<div class="container flex justify-center gap-2">
-			<RouterLink to="/">Home</RouterLink>
-			<RouterLink to="/privacy-policy">Privacy Policy</RouterLink>
+	<div class="p-2">
+		<ConfirmDialog style="max-width: 500px;" />
+		<Header />
+		<div class="container">
+			<RouterView />
 		</div>
-	</footer>
+		<footer>
+			<div class="container ">
+				<div class="flex justify-center gap-2 mt-8">
+					<RouterLink to="/">Home</RouterLink>
+					<RouterLink to="/privacy-policy">Privacy Policy</RouterLink>
+				</div>
+			</div>
+		</footer>
 
-	<DynamicDialog />
+		<DynamicDialog />
+	</div>
 </template>
 
 
