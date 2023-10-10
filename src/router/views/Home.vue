@@ -200,7 +200,7 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 
 <template>
 	<div class="flex flex-col sm:flex-row justify-between items-start gap-6  my-8">
-		<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-4 mx-auto sm:mx-0">
 			<div class="flex items-center gap-2">
 				<div class="flex flex-col">
 					<label class="font-bold" for="goal">Goal (in oz)</label>
@@ -218,7 +218,7 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 			<Button ref="logButton" @click="addToTotal" :label="`Log ${bottleSize}oz`" />
 		</div>
 
-		<div class="flex flex-grow-1 flex-col gap-2">
+		<div class="flex flex-grow-1 flex-col gap-2 mx-auto sm:mx-0 mt-8 sm:mt-0">
 			<div class="flex items-center justify-center gap-2">
 				<div class="font-bold inline-block text-4xl">
 					{{ total }} / {{ state.goal }}oz
@@ -247,7 +247,7 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 
 
 				</div>
-				<div class="bg-slate-100 w-2 h-2" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
+				<div class="bg-slate-100 dark:bg-slate-700 w-2 h-2" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
 					0).setDate(i), 'MM-DD-YYYY').value}`" v-else>
 
 				</div>

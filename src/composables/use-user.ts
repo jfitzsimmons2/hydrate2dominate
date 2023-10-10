@@ -4,6 +4,7 @@ import { supabase } from "../supabase";
 
 export const user = ref();
 export const activity = ref([] as any[]);
+
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (import.meta.env.DEV) {
     console.log("event", event, "session", session);
@@ -15,7 +16,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     event === "INITIAL_SESSION"
   ) {
     user.value = session?.user;
-    activity.value = await useUser().getUserActivity();
   } else if (event === "SIGNED_OUT") {
     user.value = undefined;
   }
