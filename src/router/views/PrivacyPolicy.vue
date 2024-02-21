@@ -1,6 +1,6 @@
 <template>
 	<div>
-
+		<hr>
 		<h1>Privacy Policy</h1>
 
 		<p>Thank you for using Hydrate2Dominate ("Web App"), developed by Joe Fitzsimmons. We are committed to protecting

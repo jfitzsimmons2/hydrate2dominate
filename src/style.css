@@ -77,3 +77,20 @@ html.dark {
 .icon--prime--bars {
   --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='black' d='M19 12.75H5a.75.75 0 0 1 0-1.5h14a.75.75 0 0 1 0 1.5Zm0-4.5H5a.75.75 0 0 1 0-1.5h14a.75.75 0 0 1 0 1.5Zm0 9H5a.75.75 0 0 1 0-1.5h14a.75.75 0 0 1 0 1.5Z'/%3E%3C/svg%3E");
 }
+
+
+h1 {
+	@apply text-4xl font-bold mb-4;
+}
+
+h2 {
+	@apply text-3xl font-bold mb-4;
+}
+
+h3 {
+	@apply text-2xl font-bold mb-4;
+}
+
+h4 {
+	@apply text-xl font-bold mb-4;
+}

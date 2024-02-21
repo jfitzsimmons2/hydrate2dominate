@@ -1,4 +1,7 @@
 <template>
+	<Dialog v-model:visible="profileOpen" :style="{ width: '600px', maxWidth: '100%' }">
+		<Profile />
+	</Dialog>
 	<header class="container flex flex-wrap items-center gap-2 justify-between mb-4">
 		<a href="/" class="flex items-center gap-2 no-underline">
 			<img src="/favicon.ico" style="width: 2.5rem; height: 2.5rem;" />
@@ -46,10 +49,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from 'vue';
-import { useLocalStorage, useStorage } from '@vueuse/core';
-import Login from './Login.vue';
-import useUser, { user } from '../composables/use-user';
+import { ref } from 'vue';
+import { useStorage } from '@vueuse/core';
+
+import Dialog from 'primevue/dialog';
+import { user } from '../composables/use-user';
 import Menu from 'primevue/menu';
 import { supabase } from '../supabase';
 import { useDialog } from 'primevue/usedialog';
@@ -59,6 +63,7 @@ import LoginSignup from './LoginSignup.vue';
 const confirm = useConfirm();
 const menu = ref();
 const dialog = useDialog();
+const profileOpen = ref(false);
 
 
 const darkMode = useStorage('my-dark-mode', false)
@@ -81,7 +86,10 @@ const menuItems = [
 			dialog.open(Profile, {
 				props: {
 					modal: true,
-					header: "Profile",
+					style: {
+						width: "600px",
+						maxWidth: "100%"
+					},
 				}
 			})
 		}
@@ -94,7 +102,8 @@ const handleLoginClick = () => {
 		props: {
 			modal: true,
 			style: {
-				width: "600px"
+				width: "600px",
+				maxWidth: "100%"
 			},
 		}
 	})
