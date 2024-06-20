@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Device } from '@capacitor/device';
 import SelectButton, { SelectButtonChangeEvent } from "primevue/selectbutton";
 import { useNow, useStorage } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
@@ -200,16 +199,7 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 	}
 }
 
-const logDeviceInfo = async () => {
-	deviceInfo.value.info = await Device.getInfo();
-};
 
-const logBatteryInfo = async () => {
-	deviceInfo.value.battery = await Device.getBatteryInfo();
-};
-
-logDeviceInfo();
-logBatteryInfo();
 
 const test = ref('test');
 </script>
@@ -273,13 +263,7 @@ const test = ref('test');
 				</div>
 			</template>
 		</div>
-		<!-- 
-		<div>
-			<h2>%MODE% debug info:</h2>
-			<pre>
-		{{ deviceInfo }}
-	</pre>
-		</div> -->
+
 	</div>
 </template>
 

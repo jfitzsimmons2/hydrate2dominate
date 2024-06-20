@@ -2,10 +2,20 @@
 import Header from "./components/Header.vue";
 import ConfirmDialog from 'primevue/confirmdialog';
 import DynamicDialog from 'primevue/dynamicdialog';
+import { Device } from '@capacitor/device';
+import { ref } from 'vue';
+
+const deviceInfo = ref();
+
+const getDeviceInfo = async () => {
+	deviceInfo.value = await Device.getInfo();
+}
+
+getDeviceInfo();
 </script>
 
 <template>
-	<div class="p-2 mt-16">
+	<div class="p-2" :class="{ 'mt-16': deviceInfo.platform === 'ios' }">
 		<ConfirmDialog style="max-width: 500px;" />
 		<Header />
 		<div class="container">
