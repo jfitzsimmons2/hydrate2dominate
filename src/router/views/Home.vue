@@ -273,13 +273,13 @@ const test = ref('test');
 				</div>
 			</template>
 		</div>
-
-		<div v-if="import.meta.env.DEV">
-			<h2>debug info:</h2>
+		<!-- 
+		<div>
+			<h2>%MODE% debug info:</h2>
 			<pre>
 		{{ deviceInfo }}
 	</pre>
-		</div>
+		</div> -->
 	</div>
 </template>
 
