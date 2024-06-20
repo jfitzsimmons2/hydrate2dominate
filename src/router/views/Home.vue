@@ -274,7 +274,7 @@ const test = ref('test');
 			</template>
 		</div>
 
-		<div>
+		<div v-if="import.meta.env.DEV">
 			<h2>debug info:</h2>
 			<pre>
 		{{ deviceInfo }}
