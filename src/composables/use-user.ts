@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { supabase } from "../supabase";
 
 export const user = ref();
-export const activity = ref([] as any[]);
+export const activity = ref<any>([]);
 
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (import.meta.env.DEV) {

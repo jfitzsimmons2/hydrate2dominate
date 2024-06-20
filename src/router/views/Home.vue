@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Device } from '@capacitor/device';
 import SelectButton, { SelectButtonChangeEvent } from "primevue/selectbutton";
 import { useNow, useStorage } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
@@ -9,7 +10,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useDateFormat } from "@vueuse/core";
 import useUser, { user, activity } from "../../composables/use-user";
 
-
+const deviceInfo = ref<{ info: any, battery: any }>({ info: '', battery: '' });
 const confirm = useConfirm();
 
 const { getUserActivity } = useUser();
@@ -41,7 +42,6 @@ const handleResetClick = async () => {
 		activity.value = [];
 	};
 };
-
 
 const today = useDateFormat(new Date(), 'MM-DD-YYYY').value;
 
@@ -105,6 +105,9 @@ watch(progress, () => {
 });
 
 const addToTotal = async (e: MouseEvent) => {
+	if (!activity.value) {
+		activity.value = [];
+	}
 	if (user.value) {
 		const { data, error } = await supabase.rpc('insert_daily_activity', {
 			p_amount_logged: bottleSize.value
@@ -196,6 +199,19 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 		state.value.bottleSize = e.value;
 	}
 }
+
+const logDeviceInfo = async () => {
+	deviceInfo.value.info = await Device.getInfo();
+};
+
+const logBatteryInfo = async () => {
+	deviceInfo.value.battery = await Device.getBatteryInfo();
+};
+
+logDeviceInfo();
+logBatteryInfo();
+
+const test = ref('test');
 </script>
 
 <template>
@@ -204,13 +220,17 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 			<div class="flex items-center gap-2">
 				<div class="flex flex-col">
 					<label class="font-bold" for="goal">Goal (in oz)</label>
-					<InputNumber id="goal" v-model.number="state.goal" /><small>How much water are you trying to get in?</small>
+					<input pattern="\d*" class="p-inputtext" type="number" id="goal" v-model.number="state.goal" /><small>How much
+						water are you
+						trying to get
+						in?</small>
 				</div>
 			</div>
+
 			<div class="flex flex-col justify-center gap-2">
 				<label class="font-bold" for="bottleSize">Bottle Size</label>
-				<SelectButton @change="handleBottleChange" :model-value.number="state.bottleSize" :options="options"
-					optionLabel="label" optionValue="value" aria-labelledby="basic" />
+				<SelectButton v-model.number="state.bottleSize" :options="options" optionLabel="label" optionValue="value"
+					aria-labelledby="basic" />
 				<InputNumber v-if="state.bottleSize === 0" id="bottleSize" aria-label="Custom bottle size"
 					v-model.number="state.otherValue" />
 			</div>
@@ -225,7 +245,7 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 				</div>
 			</div>
 			<div class="flex justify-center">
-				<Knob ref="knob" valueTemplate="{value}%" :size="200" :readonly="true" v-model="progress"></Knob>
+				<Knob ref="knob" :size="200" :readonly="true" v-model="progress"></Knob>
 			</div>
 			<Button class="p-button-link" label="Reset" @click="handleResetClick" />
 		</div>
@@ -236,25 +256,30 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 		<div class="teh-grid mx-auto">
 			<template v-for="i in 365" :key="i">
 				<div class="w-2 h-2" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
-					0).setDate(i), 'MM-DD-YYYY').value}: ${dateReduce[useDateFormat(new Date(new Date().getFullYear(),
-						0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
-							cur?.amount_logged, 0) ?? 0}oz`" :style="{
+						0).setDate(i), 'MM-DD-YYYY').value}: ${dateReduce[useDateFormat(new Date(new Date().getFullYear(),
+							0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
+								cur?.amount_logged, 0) ?? 0}oz`" :style="{
 
-				backgroundColor: darkenHexColor('#cee9ff', dateReduce[useDateFormat(new Date(new Date().getFullYear(),
-					0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
-						cur?.amount_logged, 0) ?? 0)
-			}" v-if="notFutureDate(new Date(new Date().getFullYear(), 0, i))">
+						backgroundColor: darkenHexColor('#cee9ff', dateReduce[useDateFormat(new Date(new Date().getFullYear(),
+							0).setDate(i), 'MM-DD-YYYY').value]?.reduce((acc: number, cur: any) => acc +
+								cur?.amount_logged, 0) ?? 0)
+					}" v-if="notFutureDate(new Date(new Date().getFullYear(), 0, i))">
 
 
 				</div>
 				<div class="bg-slate-100 dark:bg-slate-700 w-2 h-2" v-tooltip="`${useDateFormat(new Date(new Date().getFullYear(),
-					0).setDate(i), 'MM-DD-YYYY').value}`" v-else>
+						0).setDate(i), 'MM-DD-YYYY').value}`" v-else>
 
 				</div>
 			</template>
 		</div>
 
-
+		<div>
+			<h2>debug info:</h2>
+			<pre>
+		{{ deviceInfo }}
+	</pre>
+		</div>
 	</div>
 </template>
 
@@ -305,5 +330,46 @@ const handleBottleChange = (e: SelectButtonChangeEvent) => {
 		top: 1rem !important;
 		right: 1rem !important;
 	}
+}
+
+.p-inputtext {
+	font-family: var(--font-family);
+	font-feature-settings: var(--font-feature-settings, normal);
+	font-size: 1rem;
+	color: #334155;
+	background: #ffffff;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid #cbd5e1;
+	transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, outline-color 0.2s;
+	appearance: none;
+	border-radius: 6px;
+	outline-color: transparent;
+}
+
+.p-inputtext:enabled:hover {
+	border-color: #94a3b8;
+}
+
+.p-inputtext:enabled:focus {
+	outline: 1px solid var(--p-focus-ring-color);
+	outline-offset: -1px;
+	box-shadow: none;
+	border-color: #94a3b8;
+}
+
+.p-inputtext.p-invalid.p-component {
+	border-color: #f87171;
+}
+
+.p-inputtext.p-variant-filled {
+	background-color: #f8fafc;
+}
+
+.p-inputtext.p-variant-filled:enabled:hover {
+	background-color: #f8fafc;
+}
+
+.p-inputtext.p-variant-filled:enabled:focus {
+	background-color: #ffffff;
 }
 </style>

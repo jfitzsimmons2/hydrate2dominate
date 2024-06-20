@@ -5,14 +5,14 @@ import DynamicDialog from 'primevue/dynamicdialog';
 </script>
 
 <template>
-	<div class="p-2">
+	<div class="p-2 mt-16">
 		<ConfirmDialog style="max-width: 500px;" />
 		<Header />
 		<div class="container">
 			<RouterView />
 		</div>
 		<footer>
-			<div class="container ">
+			<div class="container">
 				<div class="flex justify-center items-center gap-2 mt-8">
 					<i class="line-md line-md-beer-alt-filled-loop text-blue-700 text-2xl" />
 					<RouterLink to="/">Home</RouterLink>
